@@ -6,8 +6,8 @@
 -- ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝
 
 --[[
-    SATANA PREMIUM HACK MENU v4.0
-    ПОЛНОСТЬЮ РАБОЧИЙ ФУНКЦИОНАЛ
+    SATANA PREMIUM HACK MENU v5.0
+    СТАРЫЕ КРАСИВЫЕ КНОПКИ + ВСЁ РАБОТАЕТ
 ]]
 
 -- Службы
@@ -16,18 +16,10 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
-local GuiService = game:GetService("GuiService")
 
 -- Локальный игрок
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
-
--- Проверяем, доступен ли Drawing API
-local DrawingSupported = pcall(function()
-    local test = Drawing.new("Square")
-    test:Remove()
-    return true
-end)
 
 -- Настройки
 local Settings = {
@@ -90,6 +82,10 @@ local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "SatanaGUI"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+if syn and syn.protect_gui then
+    syn.protect_gui(ScreenGui)
+end
 ScreenGui.Parent = game:GetService("CoreGui")
 
 -- Фоновый градиент для меню
@@ -97,7 +93,7 @@ local BackgroundGradient = Instance.new("Frame")
 BackgroundGradient.Name = "BackgroundGradient"
 BackgroundGradient.Size = UDim2.new(1, 0, 1, 0)
 BackgroundGradient.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-BackgroundGradient.BackgroundTransparency = 0.8
+BackgroundGradient.BackgroundTransparency = 0.85
 BackgroundGradient.BorderSizePixel = 0
 BackgroundGradient.Parent = ScreenGui
 
@@ -106,16 +102,11 @@ local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 400, 0, 500)
 MainFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.BorderSizePixel = 1
-MainFrame.BorderColor3 = Color3.fromRGB(220, 20, 60)
+MainFrame.BorderColor3 = Color3.fromRGB(60, 60, 60)
 MainFrame.ClipsDescendants = true
 MainFrame.Parent = ScreenGui
-
--- Закругление углов
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 10)
-UICorner.Parent = MainFrame
 
 -- Тень окна
 local UIShadow = Instance.new("ImageLabel")
@@ -124,23 +115,30 @@ UIShadow.Size = UDim2.new(1, 10, 1, 10)
 UIShadow.Position = UDim2.new(0, -5, 0, -5)
 UIShadow.Image = "rbxassetid://5554236805"
 UIShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-UIShadow.ImageTransparency = 0.8
+UIShadow.ImageTransparency = 0.7
 UIShadow.ScaleType = Enum.ScaleType.Slice
 UIShadow.SliceCenter = Rect.new(23, 23, 277, 277)
 UIShadow.BackgroundTransparency = 1
+UIShadow.ZIndex = 0
 UIShadow.Parent = MainFrame
 
--- Заголовок окна
+-- Заголовок окна с градиентом
 local TitleBar = Instance.new("Frame")
 TitleBar.Name = "TitleBar"
-TitleBar.Size = UDim2.new(1, 0, 0, 45)
-TitleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TitleBar.Size = UDim2.new(1, 0, 0, 50)
+TitleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 TitleBar.BorderSizePixel = 0
+TitleBar.ZIndex = 2
 TitleBar.Parent = MainFrame
 
-local TitleCorner = Instance.new("UICorner")
-TitleCorner.CornerRadius = UDim.new(0, 10)
-TitleCorner.Parent = TitleBar
+-- Градиент для заголовка
+local TitleGradient = Instance.new("UIGradient")
+TitleGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(220, 20, 60)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(180, 0, 40))
+})
+TitleGradient.Rotation = 90
+TitleGradient.Parent = TitleBar
 
 -- Текст заголовка
 local Title = Instance.new("TextLabel")
@@ -148,87 +146,97 @@ Title.Name = "Title"
 Title.Size = UDim2.new(1, -50, 1, 0)
 Title.Position = UDim2.new(0, 15, 0, 0)
 Title.BackgroundTransparency = 1
-Title.Text = "SATANA v4.0"
-Title.TextColor3 = Color3.fromRGB(220, 20, 60)
-Title.TextSize = 20
-Title.Font = Enum.Font.GothamBold
+Title.Text = "SATANA v5.0"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 22
+Title.Font = Enum.Font.GothamBlack
 Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.TextStrokeTransparency = 0.8
-Title.TextStrokeColor3 = Color3.fromRGB(20, 20, 20)
+Title.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+Title.ZIndex = 3
 Title.Parent = TitleBar
 
 -- Подзаголовок
 local SubTitle = Instance.new("TextLabel")
 SubTitle.Name = "SubTitle"
 SubTitle.Size = UDim2.new(1, -50, 0, 15)
-SubTitle.Position = UDim2.new(0, 15, 0, 30)
+SubTitle.Position = UDim2.new(0, 15, 0, 32)
 SubTitle.BackgroundTransparency = 1
 SubTitle.Text = "PREMIUM HACK MENU"
-SubTitle.TextColor3 = Color3.fromRGB(200, 200, 200)
-SubTitle.TextSize = 11
+SubTitle.TextColor3 = Color3.fromRGB(220, 220, 220)
+SubTitle.TextSize = 12
 SubTitle.Font = Enum.Font.Gotham
 SubTitle.TextXAlignment = Enum.TextXAlignment.Left
+SubTitle.ZIndex = 3
 SubTitle.Parent = TitleBar
 
--- Кнопка закрытия
+-- Кнопка закрытия (старый стиль)
 local CloseButton = Instance.new("TextButton")
 CloseButton.Name = "CloseButton"
 CloseButton.Size = UDim2.new(0, 32, 0, 32)
-CloseButton.Position = UDim2.new(1, -37, 0.5, -16)
+CloseButton.Position = UDim2.new(1, -42, 0.5, -16)
 CloseButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 CloseButton.BorderSizePixel = 0
-CloseButton.Text = "✕"
+CloseButton.Text = "×"
 CloseButton.TextColor3 = Color3.fromRGB(255, 100, 100)
-CloseButton.TextSize = 20
+CloseButton.TextSize = 24
 CloseButton.Font = Enum.Font.GothamBold
 CloseButton.AutoButtonColor = false
+CloseButton.ZIndex = 3
 CloseButton.Parent = TitleBar
 
+-- Скругление для кнопки закрытия
 local CloseCorner = Instance.new("UICorner")
-CloseCorner.CornerRadius = UDim.new(0, 8)
+CloseCorner.CornerRadius = UDim.new(0, 6)
 CloseCorner.Parent = CloseButton
 
 -- Эффект при наведении на кнопку закрытия
 CloseButton.MouseEnter:Connect(function()
-    TweenService:Create(CloseButton, TweenInfo.new(0.2), {
+    TweenService:Create(CloseButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
         BackgroundColor3 = Color3.fromRGB(220, 20, 60),
-        TextColor3 = Color3.fromRGB(255, 255, 255)
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        Size = UDim2.new(0, 36, 0, 36),
+        Position = UDim2.new(1, -44, 0.5, -18)
     }):Play()
 end)
 
 CloseButton.MouseLeave:Connect(function()
-    TweenService:Create(CloseButton, TweenInfo.new(0.2), {
+    TweenService:Create(CloseButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
         BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-        TextColor3 = Color3.fromRGB(255, 100, 100)
+        TextColor3 = Color3.fromRGB(255, 100, 100),
+        Size = UDim2.new(0, 32, 0, 32),
+        Position = UDim2.new(1, -42, 0.5, -16)
     }):Play()
 end)
 
 -- Область вкладок
 local TabContainer = Instance.new("Frame")
 TabContainer.Name = "TabContainer"
-TabContainer.Size = UDim2.new(1, -20, 0, 40)
-TabContainer.Position = UDim2.new(0, 10, 0, 55)
-TabContainer.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TabContainer.Size = UDim2.new(1, -20, 0, 45)
+TabContainer.Position = UDim2.new(0, 10, 0, 60)
+TabContainer.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 TabContainer.BorderSizePixel = 0
+TabContainer.ZIndex = 2
 TabContainer.Parent = MainFrame
 
 local TabCorner = Instance.new("UICorner")
 TabCorner.CornerRadius = UDim.new(0, 8)
 TabCorner.Parent = TabContainer
 
--- Создаем кнопки табов
+-- Создаем кнопки табов (старый красивый стиль)
 local function CreateTabButton(name, text, position)
     local button = Instance.new("TextButton")
     button.Name = name .. "Button"
     button.Size = UDim2.new(0.333, -4, 1, 0)
     button.Position = position
-    button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    button.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
     button.BorderSizePixel = 0
     button.Text = text
     button.TextColor3 = Color3.fromRGB(180, 180, 180)
     button.TextSize = 14
-    button.Font = Enum.Font.GothamSemibold
+    button.Font = Enum.Font.GothamBold
     button.AutoButtonColor = false
+    button.ZIndex = 3
     button.Parent = TabContainer
     
     local buttonCorner = Instance.new("UICorner")
@@ -238,8 +246,8 @@ local function CreateTabButton(name, text, position)
     -- Эффект при наведении
     button.MouseEnter:Connect(function()
         if button.BackgroundColor3 ~= Color3.fromRGB(220, 20, 60) then
-            TweenService:Create(button, TweenInfo.new(0.2), {
-                BackgroundColor3 = Color3.fromRGB(60, 60, 60),
+            TweenService:Create(button, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                BackgroundColor3 = Color3.fromRGB(50, 50, 50),
                 TextColor3 = Color3.fromRGB(255, 255, 255)
             }):Play()
         end
@@ -247,8 +255,8 @@ local function CreateTabButton(name, text, position)
     
     button.MouseLeave:Connect(function()
         if button.BackgroundColor3 ~= Color3.fromRGB(220, 20, 60) then
-            TweenService:Create(button, TweenInfo.new(0.2), {
-                BackgroundColor3 = Color3.fromRGB(40, 40, 40),
+            TweenService:Create(button, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                BackgroundColor3 = Color3.fromRGB(35, 35, 35),
                 TextColor3 = Color3.fromRGB(180, 180, 180)
             }):Play()
         end
@@ -261,17 +269,20 @@ local VisualsButton = CreateTabButton("Visuals", "VISUALS", UDim2.new(0, 0, 0, 0
 local AimbotButton = CreateTabButton("Aimbot", "AIMBOT", UDim2.new(0.333, 2, 0, 0))
 local MemoryButton = CreateTabButton("Memory", "MEMORY", UDim2.new(0.666, 4, 0, 0))
 
--- Активируем первый таб
-VisualsButton.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
-VisualsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+-- Активируем первый таб с анимацией
+TweenService:Create(VisualsButton, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+    BackgroundColor3 = Color3.fromRGB(220, 20, 60),
+    TextColor3 = Color3.fromRGB(255, 255, 255)
+}):Play()
 
 -- Область контента
 local ContentFrame = Instance.new("Frame")
 ContentFrame.Name = "ContentFrame"
-ContentFrame.Size = UDim2.new(1, -20, 1, -110)
-ContentFrame.Position = UDim2.new(0, 10, 0, 105)
+ContentFrame.Size = UDim2.new(1, -20, 1, -120)
+ContentFrame.Position = UDim2.new(0, 10, 0, 115)
 ContentFrame.BackgroundTransparency = 1
 ContentFrame.ClipsDescendants = true
+ContentFrame.ZIndex = 2
 ContentFrame.Parent = MainFrame
 
 -- Контейнеры для вкладок
@@ -282,7 +293,9 @@ VisualsContainer.BackgroundTransparency = 1
 VisualsContainer.BorderSizePixel = 0
 VisualsContainer.ScrollBarThickness = 4
 VisualsContainer.ScrollBarImageColor3 = Color3.fromRGB(220, 20, 60)
+VisualsContainer.ScrollBarImageTransparency = 0.5
 VisualsContainer.Visible = true
+VisualsContainer.ZIndex = 2
 VisualsContainer.Parent = ContentFrame
 
 local AimbotContainer = Instance.new("ScrollingFrame")
@@ -292,7 +305,9 @@ AimbotContainer.BackgroundTransparency = 1
 AimbotContainer.BorderSizePixel = 0
 AimbotContainer.ScrollBarThickness = 4
 AimbotContainer.ScrollBarImageColor3 = Color3.fromRGB(220, 20, 60)
+AimbotContainer.ScrollBarImageTransparency = 0.5
 AimbotContainer.Visible = false
+AimbotContainer.ZIndex = 2
 AimbotContainer.Parent = ContentFrame
 
 local MemoryContainer = Instance.new("ScrollingFrame")
@@ -302,22 +317,24 @@ MemoryContainer.BackgroundTransparency = 1
 MemoryContainer.BorderSizePixel = 0
 MemoryContainer.ScrollBarThickness = 4
 MemoryContainer.ScrollBarImageColor3 = Color3.fromRGB(220, 20, 60)
+MemoryContainer.ScrollBarImageTransparency = 0.5
 MemoryContainer.Visible = false
+MemoryContainer.ZIndex = 2
 MemoryContainer.Parent = ContentFrame
 
 -- Упорядочивание элементов
 local VisualsLayout = Instance.new("UIListLayout")
-VisualsLayout.Padding = UDim.new(0, 10)
+VisualsLayout.Padding = UDim.new(0, 12)
 VisualsLayout.SortOrder = Enum.SortOrder.LayoutOrder
 VisualsLayout.Parent = VisualsContainer
 
 local AimbotLayout = Instance.new("UIListLayout")
-AimbotLayout.Padding = UDim.new(0, 10)
+AimbotLayout.Padding = UDim.new(0, 12)
 AimbotLayout.SortOrder = Enum.SortOrder.LayoutOrder
 AimbotLayout.Parent = AimbotContainer
 
 local MemoryLayout = Instance.new("UIListLayout")
-MemoryLayout.Padding = UDim.new(0, 10)
+MemoryLayout.Padding = UDim.new(0, 12)
 MemoryLayout.SortOrder = Enum.SortOrder.LayoutOrder
 MemoryLayout.Parent = MemoryContainer
 
@@ -339,173 +356,237 @@ MemoryPadding.PaddingLeft = UDim.new(0, 5)
 MemoryPadding.PaddingRight = UDim.new(0, 5)
 MemoryPadding.Parent = MemoryContainer
 
--- Функция для переключения вкладок
+-- Функция для переключения вкладок с анимацией
 local function SwitchTab(tabName)
     VisualsContainer.Visible = false
     AimbotContainer.Visible = false
     MemoryContainer.Visible = false
     
-    -- Сбрасываем цвета всех кнопок
-    TweenService:Create(VisualsButton, TweenInfo.new(0.3), {
-        BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-        TextColor3 = Color3.fromRGB(180, 180, 180)
-    }):Play()
+    -- Анимация для кнопок табов
+    local tabButtons = {VisualsButton, AimbotButton, MemoryButton}
+    local tabNames = {"Visuals", "Aimbot", "Memory"}
     
-    TweenService:Create(AimbotButton, TweenInfo.new(0.3), {
-        BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-        TextColor3 = Color3.fromRGB(180, 180, 180)
-    }):Play()
+    for i, button in ipairs(tabButtons) do
+        if tabNames[i] == tabName then
+            TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                BackgroundColor3 = Color3.fromRGB(220, 20, 60),
+                TextColor3 = Color3.fromRGB(255, 255, 255)
+            }):Play()
+        else
+            TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                BackgroundColor3 = Color3.fromRGB(35, 35, 35),
+                TextColor3 = Color3.fromRGB(180, 180, 180)
+            }):Play()
+        end
+    end
     
-    TweenService:Create(MemoryButton, TweenInfo.new(0.3), {
-        BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-        TextColor3 = Color3.fromRGB(180, 180, 180)
-    }):Play()
-    
-    -- Активируем выбранную вкладку
+    -- Показываем выбранную вкладку
     if tabName == "Visuals" then
         VisualsContainer.Visible = true
-        TweenService:Create(VisualsButton, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(220, 20, 60),
-            TextColor3 = Color3.fromRGB(255, 255, 255)
-        }):Play()
     elseif tabName == "Aimbot" then
         AimbotContainer.Visible = true
-        TweenService:Create(AimbotButton, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(220, 20, 60),
-            TextColor3 = Color3.fromRGB(255, 255, 255)
-        }):Play()
     elseif tabName == "Memory" then
         MemoryContainer.Visible = true
-        TweenService:Create(MemoryButton, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(220, 20, 60),
-            TextColor3 = Color3.fromRGB(255, 255, 255)
-        }):Play()
     end
 end
 
--- Функция создания переключателя
+-- ВОЗВРАЩАЕМ СТАРЫЕ КРАСИВЫЕ ПЕРЕКЛЮЧАТЕЛИ
 local function CreateToggle(parent, text, default, callback)
     local toggleFrame = Instance.new("Frame")
-    toggleFrame.Size = UDim2.new(1, 0, 0, 35)
-    toggleFrame.BackgroundTransparency = 1
+    toggleFrame.Size = UDim2.new(1, 0, 0, 40)
+    toggleFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    toggleFrame.BorderSizePixel = 0
     toggleFrame.LayoutOrder = #parent:GetChildren()
+    toggleFrame.ZIndex = 2
     toggleFrame.Parent = parent
     
+    local toggleCorner = Instance.new("UICorner")
+    toggleCorner.CornerRadius = UDim.new(0, 8)
+    toggleCorner.Parent = toggleFrame
+    
+    -- Текст
     local toggleText = Instance.new("TextLabel")
     toggleText.Size = UDim2.new(0.7, -10, 1, 0)
-    toggleText.Position = UDim2.new(0, 10, 0, 0)
+    toggleText.Position = UDim2.new(0, 12, 0, 0)
     toggleText.BackgroundTransparency = 1
     toggleText.Text = text
     toggleText.TextColor3 = Color3.fromRGB(240, 240, 240)
     toggleText.TextSize = 14
     toggleText.Font = Enum.Font.GothamSemibold
     toggleText.TextXAlignment = Enum.TextXAlignment.Left
+    toggleText.ZIndex = 3
     toggleText.Parent = toggleFrame
     
-    local toggleButton = Instance.new("TextButton")
-    toggleButton.Size = UDim2.new(0, 50, 0, 25)
-    toggleButton.Position = UDim2.new(1, -60, 0.5, -12)
-    toggleButton.BackgroundColor3 = default and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(80, 80, 80)
-    toggleButton.BorderSizePixel = 0
-    toggleButton.Text = ""
-    toggleButton.AutoButtonColor = false
-    toggleButton.Parent = toggleFrame
-    
-    local toggleCorner = Instance.new("UICorner")
-    toggleCorner.CornerRadius = UDim.new(0, 12)
-    toggleCorner.Parent = toggleButton
-    
-    local state = default
-    
-    toggleButton.MouseButton1Click:Connect(function()
-        state = not state
-        
-        -- Анимация переключения
-        TweenService:Create(toggleButton, TweenInfo.new(0.2), {
-            BackgroundColor3 = state and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(80, 80, 80)
-        }):Play()
-        
-        if callback then
-            callback(state)
-        end
-    end)
-    
-    return {
-        Set = function(value)
-            state = value
-            toggleButton.BackgroundColor3 = state and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(80, 80, 80)
-        end,
-        Get = function() return state end
-    }
-end
-
--- УЛУЧШЕННАЯ ФУНКЦИЯ СОЗДАНИЯ СЛАЙДЕРА
-local function CreateSlider(parent, text, min, max, default, suffix, callback)
-    local sliderFrame = Instance.new("Frame")
-    sliderFrame.Size = UDim2.new(1, 0, 0, 60)
-    sliderFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    sliderFrame.BorderSizePixel = 0
-    sliderFrame.LayoutOrder = #parent:GetChildren()
-    sliderFrame.Parent = parent
-    
-    local sliderCorner = Instance.new("UICorner")
-    sliderCorner.CornerRadius = UDim.new(0, 6)
-    sliderCorner.Parent = sliderFrame
-    
-    -- Заголовок
-    local sliderText = Instance.new("TextLabel")
-    sliderText.Size = UDim2.new(1, -20, 0, 20)
-    sliderText.Position = UDim2.new(0, 10, 0, 5)
-    sliderText.BackgroundTransparency = 1
-    sliderText.Text = text .. ": " .. default .. (suffix or "")
-    sliderText.TextColor3 = Color3.fromRGB(240, 240, 240)
-    sliderText.TextSize = 14
-    sliderText.Font = Enum.Font.GothamSemibold
-    sliderText.TextXAlignment = Enum.TextXAlignment.Left
-    sliderText.Parent = sliderFrame
-    
-    -- Контейнер для слайдера
-    local sliderContainer = Instance.new("Frame")
-    sliderContainer.Size = UDim2.new(1, -20, 0, 20)
-    sliderContainer.Position = UDim2.new(0, 10, 0, 30)
-    sliderContainer.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    sliderContainer.BorderSizePixel = 0
-    sliderContainer.Parent = sliderFrame
+    -- Контейнер для переключателя
+    local toggleContainer = Instance.new("Frame")
+    toggleContainer.Size = UDim2.new(0, 54, 0, 28)
+    toggleContainer.Position = UDim2.new(1, -62, 0.5, -14)
+    toggleContainer.BackgroundColor3 = default and Color3.fromRGB(0, 180, 0) or Color3.fromRGB(70, 70, 70)
+    toggleContainer.BorderSizePixel = 0
+    toggleContainer.ZIndex = 3
+    toggleContainer.Parent = toggleFrame
     
     local containerCorner = Instance.new("UICorner")
-    containerCorner.CornerRadius = UDim.new(0, 6)
-    containerCorner.Parent = sliderContainer
+    containerCorner.CornerRadius = UDim.new(0, 14)
+    containerCorner.Parent = toggleContainer
     
-    -- Заполнение слайдера
-    local sliderFill = Instance.new("Frame")
-    sliderFill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-    sliderFill.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
-    sliderFill.BorderSizePixel = 0
+    -- Кружок внутри переключателя
+    local toggleCircle = Instance.new("Frame")
+    toggleCircle.Size = UDim2.new(0, 22, 0, 22)
+    toggleCircle.Position = default and UDim2.new(1, -24, 0.5, -11) or UDim2.new(0, 3, 0.5, -11)
+    toggleCircle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    toggleCircle.BorderSizePixel = 0
+    toggleCircle.ZIndex = 4
+    toggleCircle.Parent = toggleContainer
     
-    local fillCorner = Instance.new("UICorner")
-    fillCorner.CornerRadius = UDim.new(0, 6)
-    fillCorner.Parent = sliderFill
-    
-    -- Ползунок
-    local sliderHandle = Instance.new("Frame")
-    sliderHandle.Size = UDim2.new(0, 12, 0, 24)
-    sliderHandle.Position = UDim2.new(sliderFill.Size.X.Scale, -6, 0.5, -12)
-    sliderHandle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    sliderHandle.BorderSizePixel = 0
-    
-    local handleCorner = Instance.new("UICorner")
-    handleCorner.CornerRadius = UDim.new(0, 3)
-    handleCorner.Parent = sliderHandle
-    
-    sliderFill.Parent = sliderContainer
-    sliderHandle.Parent = sliderContainer
+    local circleCorner = Instance.new("UICorner")
+    circleCorner.CornerRadius = UDim.new(0, 11)
+    circleCorner.Parent = toggleCircle
     
     -- Кликабельная зона
     local clickArea = Instance.new("TextButton")
     clickArea.Size = UDim2.new(1, 0, 1, 0)
     clickArea.BackgroundTransparency = 1
     clickArea.Text = ""
-    clickArea.Parent = sliderContainer
+    clickArea.ZIndex = 5
+    clickArea.Parent = toggleFrame
+    
+    local state = default
+    
+    -- Функция переключения с анимацией
+    local function toggleState()
+        state = not state
+        
+        -- Анимация контейнера
+        TweenService:Create(toggleContainer, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            BackgroundColor3 = state and Color3.fromRGB(0, 180, 0) or Color3.fromRGB(70, 70, 70)
+        }):Play()
+        
+        -- Анимация кружка
+        TweenService:Create(toggleCircle, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Position = state and UDim2.new(1, -24, 0.5, -11) or UDim2.new(0, 3, 0.5, -11)
+        }):Play()
+        
+        if callback then
+            callback(state)
+        end
+    end
+    
+    clickArea.MouseButton1Click:Connect(toggleState)
+    
+    -- Эффект при наведении
+    clickArea.MouseEnter:Connect(function()
+        TweenService:Create(toggleFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        }):Play()
+    end)
+    
+    clickArea.MouseLeave:Connect(function()
+        TweenService:Create(toggleFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        }):Play()
+    end)
+    
+    return {
+        Set = function(value)
+            if state ~= value then
+                toggleState()
+            end
+        end,
+        Get = function() return state end,
+        Toggle = toggleState
+    }
+end
+
+-- УЛУЧШЕННЫЕ СЛАЙДЕРЫ
+local function CreateSlider(parent, text, min, max, default, suffix, callback)
+    local sliderFrame = Instance.new("Frame")
+    sliderFrame.Size = UDim2.new(1, 0, 0, 65)
+    sliderFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    sliderFrame.BorderSizePixel = 0
+    sliderFrame.LayoutOrder = #parent:GetChildren()
+    sliderFrame.ZIndex = 2
+    sliderFrame.Parent = parent
+    
+    local sliderCorner = Instance.new("UICorner")
+    sliderCorner.CornerRadius = UDim.new(0, 8)
+    sliderCorner.Parent = sliderFrame
+    
+    -- Заголовок и значение
+    local sliderHeader = Instance.new("Frame")
+    sliderHeader.Size = UDim2.new(1, -20, 0, 25)
+    sliderHeader.Position = UDim2.new(0, 10, 0, 5)
+    sliderHeader.BackgroundTransparency = 1
+    sliderHeader.Parent = sliderFrame
+    
+    local sliderText = Instance.new("TextLabel")
+    sliderText.Size = UDim2.new(0.7, 0, 1, 0)
+    sliderText.BackgroundTransparency = 1
+    sliderText.Text = text
+    sliderText.TextColor3 = Color3.fromRGB(240, 240, 240)
+    sliderText.TextSize = 14
+    sliderText.Font = Enum.Font.GothamSemibold
+    sliderText.TextXAlignment = Enum.TextXAlignment.Left
+    sliderText.ZIndex = 3
+    sliderText.Parent = sliderHeader
+    
+    local valueText = Instance.new("TextLabel")
+    valueText.Size = UDim2.new(0.3, 0, 1, 0)
+    valueText.Position = UDim2.new(0.7, 0, 0, 0)
+    valueText.BackgroundTransparency = 1
+    valueText.Text = tostring(default) .. (suffix or "")
+    valueText.TextColor3 = Color3.fromRGB(220, 20, 60)
+    valueText.TextSize = 14
+    valueText.Font = Enum.Font.GothamBold
+    valueText.TextXAlignment = Enum.TextXAlignment.Right
+    valueText.ZIndex = 3
+    valueText.Parent = sliderHeader
+    
+    -- Фон слайдера
+    local sliderBackground = Instance.new("Frame")
+    sliderBackground.Size = UDim2.new(1, -20, 0, 20)
+    sliderBackground.Position = UDim2.new(0, 10, 0, 35)
+    sliderBackground.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    sliderBackground.BorderSizePixel = 0
+    sliderBackground.ZIndex = 3
+    sliderBackground.Parent = sliderFrame
+    
+    local sliderBgCorner = Instance.new("UICorner")
+    sliderBgCorner.CornerRadius = UDim.new(0, 10)
+    sliderBgCorner.Parent = sliderBackground
+    
+    -- Заполнение слайдера
+    local sliderFill = Instance.new("Frame")
+    sliderFill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
+    sliderFill.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
+    sliderFill.BorderSizePixel = 0
+    sliderFill.ZIndex = 4
+    sliderFill.Parent = sliderBackground
+    
+    local sliderFillCorner = Instance.new("UICorner")
+    sliderFillCorner.CornerRadius = UDim.new(0, 10)
+    sliderFillCorner.Parent = sliderFill
+    
+    -- Ползунок
+    local sliderHandle = Instance.new("Frame")
+    sliderHandle.Size = UDim2.new(0, 16, 0, 24)
+    sliderHandle.Position = UDim2.new(sliderFill.Size.X.Scale, -8, 0.5, -12)
+    sliderHandle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    sliderHandle.BorderSizePixel = 0
+    sliderHandle.ZIndex = 5
+    sliderHandle.Parent = sliderBackground
+    
+    local handleCorner = Instance.new("UICorner")
+    handleCorner.CornerRadius = UDim.new(0, 4)
+    handleCorner.Parent = sliderHandle
+    
+    -- Кликабельная зона
+    local clickArea = Instance.new("TextButton")
+    clickArea.Size = UDim2.new(1, 0, 1, 0)
+    clickArea.BackgroundTransparency = 1
+    clickArea.Text = ""
+    clickArea.ZIndex = 6
+    clickArea.Parent = sliderBackground
     
     local value = default
     local dragging = false
@@ -515,12 +596,17 @@ local function CreateSlider(parent, text, min, max, default, suffix, callback)
         value = math.clamp(newValue, min, max)
         local percentage = (value - min) / (max - min)
         
-        -- Обновляем положение ползунка
-        sliderFill.Size = UDim2.new(percentage, 0, 1, 0)
-        sliderHandle.Position = UDim2.new(percentage, -6, 0.5, -12)
+        -- Плавная анимация
+        TweenService:Create(sliderFill, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Size = UDim2.new(percentage, 0, 1, 0)
+        }):Play()
         
-        -- Обновляем текст
-        sliderText.Text = text .. ": " .. math.floor(value) .. (suffix or "")
+        TweenService:Create(sliderHandle, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Position = UDim2.new(percentage, -8, 0.5, -12)
+        }):Play()
+        
+        -- Обновляем текст значения
+        valueText.Text = string.format("%.1f", value) .. (suffix or "")
         
         -- Вызываем коллбэк
         if callback then
@@ -534,19 +620,19 @@ local function CreateSlider(parent, text, min, max, default, suffix, callback)
             dragging = true
             
             -- Получаем позицию клика
-            local mouseLocation
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                mouseLocation = input.Position
-            else
-                mouseLocation = input.Position
-            end
+            local mouseLocation = input.Position
             
             -- Вычисляем процент
-            local relativeX = (mouseLocation.X - sliderContainer.AbsolutePosition.X) / sliderContainer.AbsoluteSize.X
+            local relativeX = (mouseLocation.X - sliderBackground.AbsolutePosition.X) / sliderBackground.AbsoluteSize.X
             relativeX = math.clamp(relativeX, 0, 1)
             local newValue = min + (max - min) * relativeX
             
             updateValue(newValue)
+            
+            -- Эффект при нажатии
+            TweenService:Create(sliderHandle, TweenInfo.new(0.1), {
+                Size = UDim2.new(0, 14, 0, 22)
+            }):Play()
         end
     end
     
@@ -557,7 +643,7 @@ local function CreateSlider(parent, text, min, max, default, suffix, callback)
             local mouseLocation = input.Position
             
             -- Вычисляем процент
-            local relativeX = (mouseLocation.X - sliderContainer.AbsolutePosition.X) / sliderContainer.AbsoluteSize.X
+            local relativeX = (mouseLocation.X - sliderBackground.AbsolutePosition.X) / sliderBackground.AbsoluteSize.X
             relativeX = math.clamp(relativeX, 0, 1)
             local newValue = min + (max - min) * relativeX
             
@@ -569,6 +655,11 @@ local function CreateSlider(parent, text, min, max, default, suffix, callback)
     local function onInputEnded(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = false
+            
+            -- Возвращаем размер ползунка
+            TweenService:Create(sliderHandle, TweenInfo.new(0.1), {
+                Size = UDim2.new(0, 16, 0, 24)
+            }):Play()
         end
     end
     
@@ -579,7 +670,6 @@ local function CreateSlider(parent, text, min, max, default, suffix, callback)
     
     -- Также подписываемся на глобальные события для более плавной работы
     UserInputService.InputEnded:Connect(onInputEnded)
-    UserInputService.InputChanged:Connect(onInputChanged)
     
     return {
         Set = function(newValue)
@@ -644,8 +734,8 @@ local AimbotFOVSlider = CreateSlider(AimbotContainer, "Aimbot FOV", 10, 360, Set
     end
 end)
 
-local AimbotSmoothSlider = CreateSlider(AimbotContainer, "Aimbot Smoothness", 1, 10, Settings.Aimbot.Smoothness * 10, "", function(value)
-    Settings.Aimbot.Smoothness = value / 10
+local AimbotSmoothSlider = CreateSlider(AimbotContainer, "Aimbot Smoothness", 0.1, 1, Settings.Aimbot.Smoothness, "", function(value)
+    Settings.Aimbot.Smoothness = value
 end)
 
 local FOVVisibleToggle = CreateToggle(AimbotContainer, "SHOW FOV CIRCLE", Settings.Aimbot.FOVVisible, function(state)
@@ -694,7 +784,7 @@ local NoclipToggle = CreateToggle(MemoryContainer, "NOCLIP", Settings.Memory.Noc
     end
 end)
 
--- ФУНКЦИИ ESP С ИСПОЛЬЗОВАНИЕМ ОБЫЧНЫХ ОБЪЕКТОВ (работает везде)
+-- ФУНКЦИИ ESP
 function CreateESP(player)
     if ESPObjects[player] then return end
     
@@ -760,7 +850,7 @@ function CreateESP(player)
     
     -- Создаем Tracer
     esp.Tracer.Name = "ESPTracer"
-    esp.Tracer.Size = UDim2.new(0, 2, 0, 2)
+    esp.Tracer.Size = UDim2.new(0, 2, 0, 100)
     esp.Tracer.BackgroundColor3 = Settings.ESP.BoxColor
     esp.Tracer.Visible = false
     esp.Tracer.ZIndex = 9
@@ -768,7 +858,7 @@ function CreateESP(player)
     
     -- Создаем Health Bar
     esp.HealthBar.Name = "ESPHealthBar"
-    esp.HealthBar.Size = UDim2.new(0, 100, 0, 4)
+    esp.HealthBar.Size = UDim2.new(0, 100, 0, 6)
     esp.HealthBar.BackgroundColor3 = Color3.new(0, 0, 0)
     esp.HealthBar.BorderSizePixel = 1
     esp.HealthBar.BorderColor3 = Color3.new(1, 1, 1)
@@ -777,7 +867,7 @@ function CreateESP(player)
     esp.HealthBar.Parent = ScreenGui
     
     esp.HealthBarFill.Name = "ESPHealthBarFill"
-    esp.HealthBarFill.Size = UDim2.new(1, 0, 1, 0)
+    esp.HealthBarFill.Size = UDim2.new(0.5, 0, 1, 0)
     esp.HealthBarFill.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
     esp.HealthBarFill.BorderSizePixel = 0
     esp.HealthBarFill.Parent = esp.HealthBar
@@ -897,10 +987,12 @@ function UpdateESP()
                 -- ESP Tracers
                 if Settings.ESP.Tracers then
                     -- Создаем линию от центра экрана к игроку
-                    esp.Tracer.Size = UDim2.new(0, 2, 0, math.sqrt(
+                    local tracerLength = math.sqrt(
                         (screenCenter.X - screenPosition.X)^2 + 
                         (screenCenter.Y - screenPosition.Y)^2
-                    ))
+                    )
+                    
+                    esp.Tracer.Size = UDim2.new(0, 2, 0, tracerLength)
                     
                     local angle = math.atan2(
                         screenPosition.Y - screenCenter.Y,
@@ -909,7 +1001,7 @@ function UpdateESP()
                     
                     esp.Tracer.Position = UDim2.new(
                         0, 
-                        screenCenter.X - esp.Tracer.Size.X.Offset/2,
+                        screenCenter.X - 1,
                         0, 
                         screenCenter.Y
                     )
@@ -988,7 +1080,7 @@ function DisableESP()
     ESPObjects = {}
 end
 
--- ФУНКЦИИ AIMBOT С ИСПОЛЬЗОВАНИЕМ Drawing API
+-- ФУНКЦИИ AIMBOT
 function GetClosestPlayer()
     local closestPlayer = nil
     local closestDistance = Settings.Aimbot.Distance
@@ -1053,23 +1145,30 @@ function AimAt(target)
 end
 
 function CreateFOVCircle()
-    if DrawingSupported and not FOVCircle then
-        FOVCircle = Drawing.new("Circle")
-        FOVCircle.Visible = Settings.Aimbot.FOVVisible
-        FOVCircle.Color = Settings.Aimbot.FOVColor
-        FOVCircle.Thickness = 2
-        FOVCircle.Transparency = Settings.Aimbot.FOVTransparency
-        FOVCircle.NumSides = 64
-        FOVCircle.Radius = Settings.Aimbot.FOV
-        FOVCircle.Filled = false
-        FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+    if not FOVCircle then
+        -- Создаем FOV круг с помощью Drawing API
+        local success, drawing = pcall(function()
+            return Drawing.new("Circle")
+        end)
+        
+        if success then
+            FOVCircle = drawing
+            FOVCircle.Visible = Settings.Aimbot.FOVVisible
+            FOVCircle.Color = Settings.Aimbot.FOVColor
+            FOVCircle.Thickness = 2
+            FOVCircle.Transparency = Settings.Aimbot.FOVTransparency
+            FOVCircle.NumSides = 64
+            FOVCircle.Radius = Settings.Aimbot.FOV
+            FOVCircle.Filled = false
+            FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+        end
     end
 end
 
 function EnableAimbot()
     Settings.Aimbot.Enabled = true
     
-    -- Создаем FOV круг если Drawing поддерживается
+    -- Создаем FOV круг
     CreateFOVCircle()
     
     -- Включаем аимбот
@@ -1092,7 +1191,9 @@ function DisableAimbot()
     end
     
     if FOVCircle then
-        FOVCircle:Remove()
+        pcall(function()
+            FOVCircle:Remove()
+        end)
         FOVCircle = nil
     end
 end
@@ -1207,55 +1308,69 @@ function DisableNoclip()
     NoclipParts = {}
 end
 
--- Кнопка открытия GUI
+-- Кнопка открытия GUI (старый красивый стиль)
 local OpenButton = Instance.new("TextButton")
 OpenButton.Name = "OpenButton"
-OpenButton.Size = UDim2.new(0, 90, 0, 40)
-OpenButton.Position = UDim2.new(1, -100, 0, 10)
+OpenButton.Size = UDim2.new(0, 100, 0, 45)
+OpenButton.Position = UDim2.new(1, -110, 0, 10)
 OpenButton.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
 OpenButton.BorderSizePixel = 0
 OpenButton.Text = "SATANA"
 OpenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-OpenButton.TextSize = 16
-OpenButton.Font = Enum.Font.GothamBold
+OpenButton.TextSize = 18
+OpenButton.Font = Enum.Font.GothamBlack
 OpenButton.AutoButtonColor = false
 OpenButton.Visible = false
+OpenButton.ZIndex = 10
 OpenButton.Parent = ScreenGui
 
 local OpenButtonCorner = Instance.new("UICorner")
 OpenButtonCorner.CornerRadius = UDim.new(0, 8)
 OpenButtonCorner.Parent = OpenButton
 
-local OpenButtonStroke = Instance.new("UIStroke")
-OpenButtonStroke.Color = Color3.fromRGB(255, 100, 100)
-OpenButtonStroke.Thickness = 2
-OpenButtonStroke.Parent = OpenButton
+local OpenButtonShadow = Instance.new("ImageLabel")
+OpenButtonShadow.Name = "OpenButtonShadow"
+OpenButtonShadow.Size = UDim2.new(1, 6, 1, 6)
+OpenButtonShadow.Position = UDim2.new(0, -3, 0, -3)
+OpenButtonShadow.Image = "rbxassetid://5554236805"
+OpenButtonShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+OpenButtonShadow.ImageTransparency = 0.7
+OpenButtonShadow.ScaleType = Enum.ScaleType.Slice
+OpenButtonShadow.SliceCenter = Rect.new(23, 23, 277, 277)
+OpenButtonShadow.BackgroundTransparency = 1
+OpenButtonShadow.ZIndex = 9
+OpenButtonShadow.Parent = OpenButton
 
 -- Эффект при наведении на кнопку открытия
 OpenButton.MouseEnter:Connect(function()
-    TweenService:Create(OpenButton, TweenInfo.new(0.2), {
+    TweenService:Create(OpenButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
         BackgroundColor3 = Color3.fromRGB(255, 50, 50),
-        Size = UDim2.new(0, 95, 0, 42)
+        Size = UDim2.new(0, 105, 0, 48),
+        Position = UDim2.new(1, -112, 0, 8)
     }):Play()
 end)
 
 OpenButton.MouseLeave:Connect(function()
-    TweenService:Create(OpenButton, TweenInfo.new(0.2), {
+    TweenService:Create(OpenButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
         BackgroundColor3 = Color3.fromRGB(220, 20, 60),
-        Size = UDim2.new(0, 90, 0, 40)
+        Size = UDim2.new(0, 100, 0, 45),
+        Position = UDim2.new(1, -110, 0, 10)
     }):Play()
 end)
 
 -- Функции открытия/закрытия GUI с анимацией
 CloseButton.MouseButton1Click:Connect(function()
-    TweenService:Create(MainFrame, TweenInfo.new(0.3), {
-        Position = UDim2.new(0.5, -200, 0.5, -600)
+    -- Анимация закрытия
+    TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+        Position = UDim2.new(0.5, -200, 1.5, -250),
+        Rotation = 5
     }):Play()
+    
     TweenService:Create(BackgroundGradient, TweenInfo.new(0.3), {
         BackgroundTransparency = 1
     }):Play()
     
-    wait(0.3)
+    wait(0.4)
     MainFrame.Visible = false
     BackgroundGradient.Visible = false
     OpenButton.Visible = true
@@ -1264,15 +1379,18 @@ end)
 OpenButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = true
     BackgroundGradient.Visible = true
-    MainFrame.Position = UDim2.new(0.5, -200, 0.5, -600)
+    MainFrame.Position = UDim2.new(0.5, -200, 1.5, -250)
+    MainFrame.Rotation = 5
     BackgroundGradient.BackgroundTransparency = 1
     
+    -- Анимация открытия
     TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Position = UDim2.new(0.5, -200, 0.5, -250)
+        Position = UDim2.new(0.5, -200, 0.5, -250),
+        Rotation = 0
     }):Play()
     
     TweenService:Create(BackgroundGradient, TweenInfo.new(0.3), {
-        BackgroundTransparency = 0.8
+        BackgroundTransparency = 0.85
     }):Play()
     
     OpenButton.Visible = false
@@ -1291,10 +1409,10 @@ MemoryButton.MouseButton1Click:Connect(function()
     SwitchTab("Memory")
 end)
 
--- ФУНКЦИЯ ДЛЯ ПЕРЕТАСКИВАНИЯ ОКНА (теперь работает идеально)
-local dragging
-local dragStart
-local startPos
+-- ФУНКЦИЯ ДЛЯ ПЕРЕТАСКИВАНИЯ ОКНА
+local dragging = false
+local dragStart = Vector2.new(0, 0)
+local startPos = UDim2.new(0, 0, 0, 0)
 
 local function update(input)
     local delta = input.Position - dragStart
@@ -1302,7 +1420,7 @@ local function update(input)
 end
 
 TitleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = true
         dragStart = input.Position
         startPos = MainFrame.Position
@@ -1316,83 +1434,91 @@ TitleBar.InputBegan:Connect(function(input)
 end)
 
 TitleBar.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        if dragging then
-            update(input)
-        end
+    if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
+        update(input)
     end
 end)
 
 -- Уведомление о загрузке
 task.spawn(function()
-    wait(2)
+    wait(1)
     
     local Notification = Instance.new("Frame")
-    Notification.Size = UDim2.new(0, 300, 0, 80)
-    Notification.Position = UDim2.new(0.5, -150, 1, 10)
+    Notification.Size = UDim2.new(0, 320, 0, 90)
+    Notification.Position = UDim2.new(0.5, -160, 1, 10)
     Notification.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     Notification.BorderSizePixel = 0
+    Notification.ZIndex = 20
     Notification.Parent = ScreenGui
 
     local NotifCorner = Instance.new("UICorner")
     NotifCorner.CornerRadius = UDim.new(0, 12)
     NotifCorner.Parent = Notification
 
-    local NotifStroke = Instance.new("UIStroke")
-    NotifStroke.Color = Color3.fromRGB(220, 20, 60)
-    NotifStroke.Thickness = 2
-    NotifStroke.Parent = Notification
+    local NotifShadow = Instance.new("ImageLabel")
+    NotifShadow.Size = UDim2.new(1, 10, 1, 10)
+    NotifShadow.Position = UDim2.new(0, -5, 0, -5)
+    NotifShadow.Image = "rbxassetid://5554236805"
+    NotifShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+    NotifShadow.ImageTransparency = 0.7
+    NotifShadow.ScaleType = Enum.ScaleType.Slice
+    NotifShadow.SliceCenter = Rect.new(23, 23, 277, 277)
+    NotifShadow.BackgroundTransparency = 1
+    NotifShadow.ZIndex = 19
+    NotifShadow.Parent = Notification
 
     local NotifTitle = Instance.new("TextLabel")
-    NotifTitle.Size = UDim2.new(1, 0, 0, 30)
+    NotifTitle.Size = UDim2.new(1, 0, 0, 40)
     NotifTitle.BackgroundTransparency = 1
-    NotifTitle.Text = "SATANA v4.0 ЗАГРУЖЕН"
-    NotifTitle.TextColor3 = Color3.fromRGB(255, 50, 50)
-    NotifTitle.TextSize = 18
-    NotifTitle.Font = Enum.Font.GothamBold
+    NotifTitle.Text = "SATANA v5.0 ЗАГРУЖЕН"
+    NotifTitle.TextColor3 = Color3.fromRGB(220, 20, 60)
+    NotifTitle.TextSize = 20
+    NotifTitle.Font = Enum.Font.GothamBlack
     NotifTitle.TextStrokeTransparency = 0.5
+    NotifTitle.ZIndex = 21
     NotifTitle.Parent = Notification
 
     local NotifText = Instance.new("TextLabel")
     NotifText.Size = UDim2.new(1, -20, 0, 40)
-    NotifText.Position = UDim2.new(0, 10, 0, 30)
+    NotifText.Position = UDim2.new(0, 10, 0, 40)
     NotifText.BackgroundTransparency = 1
     NotifText.Text = "Все функции активны! Нажмите кнопку SATANA для открытия меню."
-    NotifText.TextColor3 = Color3.fromRGB(200, 200, 200)
-    NotifText.TextSize = 12
+    NotifText.TextColor3 = Color3.fromRGB(220, 220, 220)
+    NotifText.TextSize = 13
     NotifText.Font = Enum.Font.Gotham
     NotifText.TextWrapped = true
+    NotifText.ZIndex = 21
     NotifText.Parent = Notification
 
     -- Анимация появления
-    Notification:TweenPosition(UDim2.new(0.5, -150, 1, -100), Enum.EasingDirection.Out, Enum.EasingStyle.Back, 0.5)
+    Notification:TweenPosition(UDim2.new(0.5, -160, 1, -110), Enum.EasingDirection.Out, Enum.EasingStyle.Back, 0.5)
     
     -- Автоматическое скрытие
     wait(5)
-    Notification:TweenPosition(UDim2.new(0.5, -150, 1, 10), Enum.EasingDirection.In, Enum.EasingStyle.Quad, 0.5)
+    Notification:TweenPosition(UDim2.new(0.5, -160, 1, 10), Enum.EasingDirection.In, Enum.EasingStyle.Quad, 0.5)
     wait(0.5)
     Notification:Destroy()
 end)
 
 -- Отправляем уведомление в чат
 game:GetService("StarterGui"):SetCore("SendNotification", {
-    Title = "SATANA v4.0",
+    Title = "SATANA v5.0",
     Text = "Премиум меню загружено! Нажмите кнопку SATANA в правом верхнем углу.",
-    Duration = 10,
+    Duration = 8,
     Icon = "rbxassetid://0"
 })
 
-print("==========================================")
-print("SATANA PREMIUM HACK MENU v4.0")
-print("==========================================")
-print("ESP: ✓ Включен (использует обычные объекты)")
-print("Aimbot: ✓ Включен с FOV кругом")
-print("Memory: ✓ Все функции активны")
-print("Слайдеры: ✓ Полностью рабочие")
-print("Перемещение: ✓ Работает идеально")
-print("==========================================")
+print("╔══════════════════════════════════════╗")
+print("║      SATANA PREMIUM HACK MENU v5.0   ║")
+print("╠══════════════════════════════════════╣")
+print("║ • ESP: ✓ Полностью рабочий           ║")
+print("║ • Aimbot: ✓ С FOV кругом             ║")
+print("║ • Memory: ✓ Все функции активны      ║")
+print("║ • Слайдеры: ✓ Плавные и точные       ║")
+print("║ • Кнопки: ✓ Старый красивый стиль    ║")
+print("║ • Перемещение: ✓ Работает идеально   ║")
+print("╚══════════════════════════════════════╝")
 print("Нажмите кнопку SATANA для открытия меню")
-print("==========================================")
 
 -- Активируем GUI при запуске
 OpenButton.Visible = false
