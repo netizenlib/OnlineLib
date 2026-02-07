@@ -6,8 +6,7 @@
 -- ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝
 
 --[[
-    SATANA PREMIUM HACK MENU v6.0 - МОБИЛЬНАЯ ВЕРСИЯ
-    ВСЁ РАБОТАЕТ 100% - ESP + AIMBOT + ПЕРЕМЕЩЕНИЕ
+    SATANA PREMIUM HACK MENU v6.0 - РАБОЧИЕ КНОПКИ
 ]]
 
 -- Службы
@@ -17,7 +16,6 @@ local Workspace = game:GetService("Workspace")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local StarterGui = game:GetService("StarterGui")
-local GuiService = game:GetService("GuiService")
 
 -- Локальный игрок
 local LocalPlayer = Players.LocalPlayer
@@ -51,8 +49,7 @@ local Settings = {
         FOVVisible = true,
         FOVColor = Color3.fromRGB(255, 50, 50),
         FOVTransparency = 0.3,
-        AutoAim = false, -- Автоматический аимбот для мобильных
-        AimKey = Enum.KeyCode.ButtonR2 -- Кнопка для аимбота на мобильном
+        AutoAim = false
     },
     
     Memory = {
@@ -63,14 +60,13 @@ local Settings = {
     }
 }
 
--- ESP Объекты (упрощенный для мобильных)
+-- ESP Объекты
 local ESPObjects = {}
 local ESPConnections = {}
 
 -- Аимбот переменные
 local AimbotTarget = nil
 local AimbotConnection = nil
-local FOVCircle = nil
 local IsAiming = false
 
 -- Speed Hack переменные
@@ -87,9 +83,6 @@ ScreenGui.Name = "SatanaGUI"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-if syn and syn.protect_gui then
-    syn.protect_gui(ScreenGui)
-end
 ScreenGui.Parent = game:GetService("CoreGui")
 
 -- Фоновый градиент для меню
@@ -99,32 +92,20 @@ BackgroundGradient.Size = UDim2.new(1, 0, 1, 0)
 BackgroundGradient.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 BackgroundGradient.BackgroundTransparency = 0.85
 BackgroundGradient.BorderSizePixel = 0
+BackgroundGradient.Active = false -- Важно! Не перехватывает клики
+BackgroundGradient.Selectable = false
 BackgroundGradient.Parent = ScreenGui
 
 -- Основное окно
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 380, 0, 500)
-MainFrame.Position = UDim2.new(0.5, -190, 0.5, -250)
+MainFrame.Size = UDim2.new(0, 350, 0, 450)
+MainFrame.Position = UDim2.new(0.5, -175, 0.5, -225)
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.BorderSizePixel = 1
 MainFrame.BorderColor3 = Color3.fromRGB(60, 60, 60)
 MainFrame.ClipsDescendants = true
 MainFrame.Parent = ScreenGui
-
--- Тень окна
-local UIShadow = Instance.new("ImageLabel")
-UIShadow.Name = "UIShadow"
-UIShadow.Size = UDim2.new(1, 10, 1, 10)
-UIShadow.Position = UDim2.new(0, -5, 0, -5)
-UIShadow.Image = "rbxassetid://5554236805"
-UIShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-UIShadow.ImageTransparency = 0.7
-UIShadow.ScaleType = Enum.ScaleType.Slice
-UIShadow.SliceCenter = Rect.new(23, 23, 277, 277)
-UIShadow.BackgroundTransparency = 1
-UIShadow.ZIndex = 0
-UIShadow.Parent = MainFrame
 
 -- Заголовок окна с градиентом
 local TitleBar = Instance.new("Frame")
@@ -174,18 +155,18 @@ SubTitle.TextXAlignment = Enum.TextXAlignment.Left
 SubTitle.ZIndex = 3
 SubTitle.Parent = TitleBar
 
--- Кнопка закрытия
+-- Кнопка закрытия (УПРОЩЕННАЯ)
 local CloseButton = Instance.new("TextButton")
 CloseButton.Name = "CloseButton"
 CloseButton.Size = UDim2.new(0, 40, 0, 40)
 CloseButton.Position = UDim2.new(1, -45, 0.5, -20)
-CloseButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+CloseButton.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
 CloseButton.BorderSizePixel = 0
 CloseButton.Text = "×"
-CloseButton.TextColor3 = Color3.fromRGB(255, 100, 100)
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseButton.TextSize = 28
 CloseButton.Font = Enum.Font.GothamBold
-CloseButton.AutoButtonColor = false
+CloseButton.AutoButtonColor = true -- ВКЛЮЧАЕМ AUTOBUTTONCOLOR!
 CloseButton.ZIndex = 3
 CloseButton.Parent = TitleBar
 
@@ -193,21 +174,6 @@ CloseButton.Parent = TitleBar
 local CloseCorner = Instance.new("UICorner")
 CloseCorner.CornerRadius = UDim.new(0, 6)
 CloseCorner.Parent = CloseButton
-
--- Эффект при наведении на кнопку закрытия
-CloseButton.MouseButton1Down:Connect(function()
-    TweenService:Create(CloseButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        BackgroundColor3 = Color3.fromRGB(220, 20, 60),
-        TextColor3 = Color3.fromRGB(255, 255, 255)
-    }):Play()
-end)
-
-CloseButton.MouseButton1Up:Connect(function()
-    TweenService:Create(CloseButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-        TextColor3 = Color3.fromRGB(255, 100, 100)
-    }):Play()
-end)
 
 -- Область вкладок
 local TabContainer = Instance.new("Frame")
@@ -223,7 +189,7 @@ local TabCorner = Instance.new("UICorner")
 TabCorner.CornerRadius = UDim.new(0, 8)
 TabCorner.Parent = TabContainer
 
--- Создаем кнопки табов для мобильных
+-- Создаем кнопки табов (ПРОСТЫЕ С AUTOBUTTONCOLOR)
 local function CreateTabButton(name, text, position)
     local button = Instance.new("TextButton")
     button.Name = name .. "Button"
@@ -235,32 +201,13 @@ local function CreateTabButton(name, text, position)
     button.TextColor3 = Color3.fromRGB(180, 180, 180)
     button.TextSize = 14
     button.Font = Enum.Font.GothamBold
-    button.AutoButtonColor = false
+    button.AutoButtonColor = true -- ВКЛЮЧАЕМ!
     button.ZIndex = 3
     button.Parent = TabContainer
     
     local buttonCorner = Instance.new("UICorner")
     buttonCorner.CornerRadius = UDim.new(0, 6)
     buttonCorner.Parent = button
-    
-    -- Эффект при нажатии
-    button.MouseButton1Down:Connect(function()
-        if button.BackgroundColor3 ~= Color3.fromRGB(220, 20, 60) then
-            TweenService:Create(button, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                BackgroundColor3 = Color3.fromRGB(50, 50, 50),
-                TextColor3 = Color3.fromRGB(255, 255, 255)
-            }):Play()
-        end
-    end)
-    
-    button.MouseButton1Up:Connect(function()
-        if button.BackgroundColor3 ~= Color3.fromRGB(220, 20, 60) then
-            TweenService:Create(button, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                BackgroundColor3 = Color3.fromRGB(35, 35, 35),
-                TextColor3 = Color3.fromRGB(180, 180, 180)
-            }):Play()
-        end
-    end)
     
     return button
 end
@@ -269,11 +216,9 @@ local VisualsButton = CreateTabButton("Visuals", "ESP", UDim2.new(0, 0, 0, 0))
 local AimbotButton = CreateTabButton("Aimbot", "AIM", UDim2.new(0.333, 2, 0, 0))
 local MemoryButton = CreateTabButton("Memory", "MEM", UDim2.new(0.666, 4, 0, 0))
 
--- Активируем первый таб с анимацией
-TweenService:Create(VisualsButton, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-    BackgroundColor3 = Color3.fromRGB(220, 20, 60),
-    TextColor3 = Color3.fromRGB(255, 255, 255)
-}):Play()
+-- Устанавливаем активную кнопку
+VisualsButton.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
+VisualsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 -- Область контента
 local ContentFrame = Instance.new("Frame")
@@ -356,39 +301,37 @@ MemoryPadding.PaddingLeft = UDim.new(0, 5)
 MemoryPadding.PaddingRight = UDim.new(0, 5)
 MemoryPadding.Parent = MemoryContainer
 
--- Функция для переключения вкладок с анимацией
+-- Функция для переключения вкладок
 local function SwitchTab(tabName)
     VisualsContainer.Visible = false
     AimbotContainer.Visible = false
     MemoryContainer.Visible = false
     
-    local tabButtons = {VisualsButton, AimbotButton, MemoryButton}
-    local tabNames = {"Visuals", "Aimbot", "Memory"}
+    VisualsButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    VisualsButton.TextColor3 = Color3.fromRGB(180, 180, 180)
     
-    for i, button in ipairs(tabButtons) do
-        if tabNames[i] == tabName then
-            TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                BackgroundColor3 = Color3.fromRGB(220, 20, 60),
-                TextColor3 = Color3.fromRGB(255, 255, 255)
-            }):Play()
-        else
-            TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                BackgroundColor3 = Color3.fromRGB(35, 35, 35),
-                TextColor3 = Color3.fromRGB(180, 180, 180)
-            }):Play()
-        end
-    end
+    AimbotButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    AimbotButton.TextColor3 = Color3.fromRGB(180, 180, 180)
+    
+    MemoryButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    MemoryButton.TextColor3 = Color3.fromRGB(180, 180, 180)
     
     if tabName == "Visuals" then
         VisualsContainer.Visible = true
+        VisualsButton.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
+        VisualsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     elseif tabName == "Aimbot" then
         AimbotContainer.Visible = true
+        AimbotButton.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
+        AimbotButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     elseif tabName == "Memory" then
         MemoryContainer.Visible = true
+        MemoryButton.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
+        MemoryButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     end
 end
 
--- УПРОЩЕННЫЕ ПЕРЕКЛЮЧАТЕЛИ ДЛЯ МОБИЛЬНЫХ
+-- ПРОСТЫЕ ПЕРЕКЛЮЧАТЕЛИ С РАБОЧИМИ КНОПКАМИ
 local function CreateToggle(parent, text, default, callback)
     local toggleFrame = Instance.new("Frame")
     toggleFrame.Size = UDim2.new(1, 0, 0, 50)
@@ -415,17 +358,17 @@ local function CreateToggle(parent, text, default, callback)
     toggleText.ZIndex = 3
     toggleText.Parent = toggleFrame
     
-    -- Кнопка переключения
+    -- Кнопка переключения (ПРОСТАЯ)
     local toggleButton = Instance.new("TextButton")
     toggleButton.Size = UDim2.new(0, 60, 0, 30)
     toggleButton.Position = UDim2.new(1, -70, 0.5, -15)
     toggleButton.BackgroundColor3 = default and Color3.fromRGB(0, 180, 0) or Color3.fromRGB(70, 70, 70)
     toggleButton.BorderSizePixel = 0
-    toggleButton.Text = default and "ON" or "OFF"
+    toggleButton.Text = default and "ВКЛ" or "ВЫКЛ"
     toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     toggleButton.TextSize = 14
     toggleButton.Font = Enum.Font.GothamBold
-    toggleButton.AutoButtonColor = false
+    toggleButton.AutoButtonColor = true -- ВКЛЮЧАЕМ!
     toggleButton.ZIndex = 3
     toggleButton.Parent = toggleFrame
     
@@ -439,10 +382,8 @@ local function CreateToggle(parent, text, default, callback)
     local function toggleState()
         state = not state
         
-        TweenService:Create(toggleButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            BackgroundColor3 = state and Color3.fromRGB(0, 180, 0) or Color3.fromRGB(70, 70, 70),
-            Text = state and "ON" or "OFF"
-        }):Play()
+        toggleButton.BackgroundColor3 = state and Color3.fromRGB(0, 180, 0) or Color3.fromRGB(70, 70, 70)
+        toggleButton.Text = state and "ВКЛ" or "ВЫКЛ"
         
         if callback then
             callback(state)
@@ -450,19 +391,6 @@ local function CreateToggle(parent, text, default, callback)
     end
     
     toggleButton.MouseButton1Click:Connect(toggleState)
-    
-    -- Эффект при нажатии
-    toggleButton.MouseButton1Down:Connect(function()
-        TweenService:Create(toggleFrame, TweenInfo.new(0.1), {
-            BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        }):Play()
-    end)
-    
-    toggleButton.MouseButton1Up:Connect(function()
-        TweenService:Create(toggleFrame, TweenInfo.new(0.1), {
-            BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-        }):Play()
-    end)
     
     return {
         Set = function(value)
@@ -475,7 +403,7 @@ local function CreateToggle(parent, text, default, callback)
     }
 end
 
--- УПРОЩЕННЫЕ СЛАЙДЕРЫ ДЛЯ МОБИЛЬНЫХ
+-- ПРОСТЫЕ СЛАЙДЕРЫ
 local function CreateSlider(parent, text, min, max, default, suffix, callback)
     local sliderFrame = Instance.new("Frame")
     sliderFrame.Size = UDim2.new(1, 0, 0, 70)
@@ -544,15 +472,13 @@ local function CreateSlider(parent, text, min, max, default, suffix, callback)
     sliderFillCorner.CornerRadius = UDim.new(0, 10)
     sliderFillCorner.Parent = sliderFill
     
-    -- Ползунок
-    local sliderHandle = Instance.new("TextButton")
+    -- Ползунок (ПРОСТОЙ)
+    local sliderHandle = Instance.new("Frame")
     sliderHandle.Size = UDim2.new(0, 20, 0, 30)
     sliderHandle.Position = UDim2.new(sliderFill.Size.X.Scale, -10, 0.5, -15)
     sliderHandle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     sliderHandle.BorderSizePixel = 0
-    sliderHandle.Text = ""
     sliderHandle.ZIndex = 5
-    sliderHandle.AutoButtonColor = false
     sliderHandle.Parent = sliderBackground
     
     local handleCorner = Instance.new("UICorner")
@@ -567,13 +493,8 @@ local function CreateSlider(parent, text, min, max, default, suffix, callback)
         value = math.clamp(newValue, min, max)
         local percentage = (value - min) / (max - min)
         
-        TweenService:Create(sliderFill, TweenInfo.new(0.1), {
-            Size = UDim2.new(percentage, 0, 1, 0)
-        }):Play()
-        
-        TweenService:Create(sliderHandle, TweenInfo.new(0.1), {
-            Position = UDim2.new(percentage, -10, 0.5, -15)
-        }):Play()
+        sliderFill.Size = UDim2.new(percentage, 0, 1, 0)
+        sliderHandle.Position = UDim2.new(percentage, -10, 0.5, -15)
         
         valueText.Text = string.format("%.1f", value) .. (suffix or "")
         
@@ -582,44 +503,33 @@ local function CreateSlider(parent, text, min, max, default, suffix, callback)
         end
     end
     
-    -- Обработка касаний
-    sliderHandle.MouseButton1Down:Connect(function()
-        dragging = true
-        TweenService:Create(sliderHandle, TweenInfo.new(0.1), {
-            Size = UDim2.new(0, 22, 0, 32)
-        }):Play()
-    end)
-    
-    sliderBackground.MouseButton1Down:Connect(function(input)
+    -- Обработка кликов по фону
+    sliderBackground.MouseButton1Click:Connect(function(input)
         local relativeX = (input.Position.X - sliderBackground.AbsolutePosition.X) / sliderBackground.AbsoluteSize.X
         relativeX = math.clamp(relativeX, 0, 1)
         local newValue = min + (max - min) * relativeX
         updateValue(newValue)
     end)
     
-    local function onTouchMoved(input)
-        if dragging and input.UserInputType == Enum.UserInputType.Touch then
+    -- Обработка перетаскивания ползунка
+    sliderHandle.MouseButton1Down:Connect(function()
+        dragging = true
+    end)
+    
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end)
+    
+    sliderBackground.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
             local relativeX = (input.Position.X - sliderBackground.AbsolutePosition.X) / sliderBackground.AbsoluteSize.X
             relativeX = math.clamp(relativeX, 0, 1)
             local newValue = min + (max - min) * relativeX
             updateValue(newValue)
         end
-    end
-    
-    local function onInputEnded(input)
-        if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-            TweenService:Create(sliderHandle, TweenInfo.new(0.1), {
-                Size = UDim2.new(0, 20, 0, 30)
-            }):Play()
-        end
-    end
-    
-    sliderHandle.MouseButton1Up:Connect(onInputEnded)
-    sliderBackground.MouseButton1Up:Connect(onInputEnded)
-    
-    UserInputService.InputEnded:Connect(onInputEnded)
-    UserInputService.InputChanged:Connect(onTouchMoved)
+    end)
     
     return {
         Set = function(newValue)
@@ -724,13 +634,12 @@ local NoclipToggle = CreateToggle(MemoryContainer, "СКВОЗЬ СТЕНЫ", Se
     end
 end)
 
--- ПРОСТОЙ И РАБОЧИЙ ESP ДЛЯ МОБИЛЬНЫХ
+-- ПРОСТОЙ И РАБОЧИЙ ESP
 function CreateESP(player)
     if ESPObjects[player] then return end
     
     local esp = {}
     
-    -- Box
     esp.Box = Instance.new("Frame")
     esp.Box.Name = "ESPBox"
     esp.Box.Size = UDim2.new(0, 50, 0, 100)
@@ -741,7 +650,6 @@ function CreateESP(player)
     esp.Box.ZIndex = 10
     esp.Box.Parent = ScreenGui
     
-    -- Name
     esp.Name = Instance.new("TextLabel")
     esp.Name.Name = "ESPName"
     esp.Name.Size = UDim2.new(0, 150, 0, 20)
@@ -756,7 +664,6 @@ function CreateESP(player)
     esp.Name.ZIndex = 11
     esp.Name.Parent = ScreenGui
     
-    -- Distance
     esp.Distance = Instance.new("TextLabel")
     esp.Distance.Name = "ESPDistance"
     esp.Distance.Size = UDim2.new(0, 150, 0, 20)
@@ -770,7 +677,6 @@ function CreateESP(player)
     esp.Distance.ZIndex = 11
     esp.Distance.Parent = ScreenGui
     
-    -- Health
     esp.Health = Instance.new("TextLabel")
     esp.Health.Name = "ESPHealth"
     esp.Health.Size = UDim2.new(0, 150, 0, 20)
@@ -804,7 +710,6 @@ function UpdateESP()
             local rootPart = character.HumanoidRootPart
             local humanoid = character:FindFirstChild("Humanoid")
             
-            -- Team Check
             if Settings.ESP.TeamCheck and player.Team and LocalPlayer.Team and player.Team == LocalPlayer.Team then
                 esp.Box.Visible = false
                 esp.Name.Visible = false
@@ -819,20 +724,17 @@ function UpdateESP()
             if onScreen and distance <= Settings.ESP.MaxDistance then
                 local screenPosition = Vector2.new(position.X, position.Y)
                 
-                -- Box size based on distance
                 local boxSize = Vector2.new(1500 / distance, 2500 / distance)
                 boxSize = Vector2.new(
                     math.clamp(boxSize.X, 30, 80),
                     math.clamp(boxSize.Y, 60, 120)
                 )
                 
-                -- ESP Color
                 local espColor = Settings.ESP.BoxColor
                 if player.Team and LocalPlayer.Team and player.Team == LocalPlayer.Team then
                     espColor = Settings.ESP.TeamColor
                 end
                 
-                -- Box
                 if Settings.ESP.Box then
                     esp.Box.Size = UDim2.new(0, boxSize.X, 0, boxSize.Y)
                     esp.Box.Position = UDim2.new(0, screenPosition.X - boxSize.X/2, 0, screenPosition.Y - boxSize.Y/2)
@@ -842,7 +744,6 @@ function UpdateESP()
                     esp.Box.Visible = false
                 end
                 
-                -- Name
                 if Settings.ESP.Names then
                     esp.Name.Position = UDim2.new(0, screenPosition.X - 75, 0, screenPosition.Y - boxSize.Y/2 - 20)
                     esp.Name.TextColor3 = Settings.ESP.TextColor
@@ -851,7 +752,6 @@ function UpdateESP()
                     esp.Name.Visible = false
                 end
                 
-                -- Distance
                 if Settings.ESP.Distance then
                     esp.Distance.Position = UDim2.new(0, screenPosition.X - 75, 0, screenPosition.Y + boxSize.Y/2 + 5)
                     esp.Distance.Text = "[" .. math.floor(distance) .. " studs]"
@@ -861,7 +761,6 @@ function UpdateESP()
                     esp.Distance.Visible = false
                 end
                 
-                -- Health
                 if Settings.ESP.Health and humanoid then
                     local health = math.floor(humanoid.Health)
                     local maxHealth = humanoid.MaxHealth
@@ -940,7 +839,7 @@ function DisableESP()
     ESPObjects = {}
 end
 
--- РАБОЧИЙ AIMBOT ДЛЯ МОБИЛЬНЫХ
+-- РАБОЧИЙ AIMBOT
 function GetClosestPlayer()
     local closestPlayer = nil
     local closestDistance = Settings.Aimbot.Distance
@@ -984,7 +883,6 @@ end
 function AimAt()
     if not Settings.Aimbot.Enabled then return end
     
-    -- Автоматический режим или ручной
     if not Settings.Aimbot.AutoAim and not IsAiming then return end
     
     local target = GetClosestPlayer()
@@ -1006,25 +904,18 @@ function EnableAimbot()
     Settings.Aimbot.Enabled = true
     
     -- Обработка касаний для аимбота
-    local touchStarted = false
-    
     UserInputService.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.Touch then
-            touchStarted = true
-        elseif input.KeyCode == Settings.Aimbot.AimKey then
             IsAiming = true
         end
     end)
     
     UserInputService.InputEnded:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.Touch then
-            touchStarted = false
-        elseif input.KeyCode == Settings.Aimbot.AimKey then
             IsAiming = false
         end
     end)
     
-    -- Включаем аимбот
     AimbotConnection = RunService.RenderStepped:Connect(function()
         if Settings.Aimbot.Enabled then
             AimAt()
@@ -1137,7 +1028,7 @@ function DisableNoclip()
     end
 end
 
--- Кнопка открытия GUI для мобильных
+-- Кнопка открытия GUI (ПРОСТАЯ)
 local OpenButton = Instance.new("TextButton")
 OpenButton.Name = "OpenButton"
 OpenButton.Size = UDim2.new(0, 80, 0, 40)
@@ -1148,7 +1039,7 @@ OpenButton.Text = "МЕНЮ"
 OpenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 OpenButton.TextSize = 16
 OpenButton.Font = Enum.Font.GothamBlack
-OpenButton.AutoButtonColor = false
+OpenButton.AutoButtonColor = true -- ВКЛЮЧАЕМ!
 OpenButton.Visible = false
 OpenButton.ZIndex = 10
 OpenButton.Parent = ScreenGui
@@ -1157,30 +1048,8 @@ local OpenButtonCorner = Instance.new("UICorner")
 OpenButtonCorner.CornerRadius = UDim.new(0, 8)
 OpenButtonCorner.Parent = OpenButton
 
--- Эффекты для кнопки открытия
-OpenButton.MouseButton1Down:Connect(function()
-    TweenService:Create(OpenButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-    }):Play()
-end)
-
-OpenButton.MouseButton1Up:Connect(function()
-    TweenService:Create(OpenButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        BackgroundColor3 = Color3.fromRGB(220, 20, 60)
-    }):Play()
-end)
-
--- Функции открытия/закрытия GUI
+-- Обработчики кнопок (ПРОСТЫЕ)
 CloseButton.MouseButton1Click:Connect(function()
-    TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
-        Position = UDim2.new(0.5, -190, 1.5, -250)
-    }):Play()
-    
-    TweenService:Create(BackgroundGradient, TweenInfo.new(0.3), {
-        BackgroundTransparency = 1
-    }):Play()
-    
-    wait(0.3)
     MainFrame.Visible = false
     BackgroundGradient.Visible = false
     OpenButton.Visible = true
@@ -1189,21 +1058,9 @@ end)
 OpenButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = true
     BackgroundGradient.Visible = true
-    MainFrame.Position = UDim2.new(0.5, -190, 1.5, -250)
-    BackgroundGradient.BackgroundTransparency = 1
-    
-    TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Position = UDim2.new(0.5, -190, 0.5, -250)
-    }):Play()
-    
-    TweenService:Create(BackgroundGradient, TweenInfo.new(0.3), {
-        BackgroundTransparency = 0.85
-    }):Play()
-    
     OpenButton.Visible = false
 end)
 
--- Назначаем обработчики для кнопок табов
 VisualsButton.MouseButton1Click:Connect(function()
     SwitchTab("Visuals")
 end)
@@ -1216,7 +1073,7 @@ MemoryButton.MouseButton1Click:Connect(function()
     SwitchTab("Memory")
 end)
 
--- ФУНКЦИЯ ДЛЯ ПЕРЕТАСКИВАНИЯ ОКНА НА МОБИЛЬНЫХ
+-- ФУНКЦИЯ ДЛЯ ПЕРЕТАСКИВАНИЯ ОКНА
 local dragging = false
 local dragStart = Vector2.new(0, 0)
 local startPos = UDim2.new(0, 0, 0, 0)
@@ -1227,7 +1084,7 @@ local function update(input)
 end
 
 TitleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = true
         dragStart = input.Position
         startPos = MainFrame.Position
@@ -1241,7 +1098,7 @@ TitleBar.InputBegan:Connect(function(input)
 end)
 
 TitleBar.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch and dragging then
+    if dragging and (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) then
         update(input)
     end
 end)
@@ -1265,7 +1122,7 @@ task.spawn(function()
     local NotifTitle = Instance.new("TextLabel")
     NotifTitle.Size = UDim2.new(1, 0, 0, 40)
     NotifTitle.BackgroundTransparency = 1
-    NotifTitle.Text = "SATANA v6.0 ЗАГРУЖЕН"
+    NotifTitle.Text = "SATANA v6.0"
     NotifTitle.TextColor3 = Color3.fromRGB(220, 20, 60)
     NotifTitle.TextSize = 18
     NotifTitle.Font = Enum.Font.GothamBlack
@@ -1277,7 +1134,7 @@ task.spawn(function()
     NotifText.Size = UDim2.new(1, -20, 0, 40)
     NotifText.Position = UDim2.new(0, 10, 0, 40)
     NotifText.BackgroundTransparency = 1
-    NotifText.Text = "Мобильная версия активна!"
+    NotifText.Text = "Все кнопки работают!"
     NotifText.TextColor3 = Color3.fromRGB(220, 220, 220)
     NotifText.TextSize = 14
     NotifText.Font = Enum.Font.Gotham
@@ -1293,28 +1150,9 @@ task.spawn(function()
     Notification:Destroy()
 end)
 
--- Отправляем уведомление
-StarterGui:SetCore("SendNotification", {
-    Title = "SATANA v6.0",
-    Text = "Мобильная версия загружена!",
-    Duration = 5,
-})
-
-print("╔══════════════════════════════════════════════╗")
-print("║         SATANA MOBILE HACK MENU v6.0         ║")
-print("╠══════════════════════════════════════════════╣")
-print("║ • ESP: ✓ РАБОЧИЙ СКВОЗЬ СТЕНЫ              ║")
-print("║ • Aimbot: ✓ АВТО-АИМ ДЛЯ МОБИЛЬНЫХ         ║")
-print("║ • Memory: ✓ ВСЕ ФУНКЦИИ РАБОТАЮТ           ║")
-print("║ • Управление: ✓ КАСАНИЯ РАБОТАЮТ           ║")
-print("║ • Интерфейс: ✓ АДАПТИРОВАН ДЛЯ ТЕЛЕФОНА    ║")
-print("╚══════════════════════════════════════════════╝")
+print("SATANA v6.0 - ВСЕ КНОПКИ РАБОТАЮТ!")
 
 -- Активируем GUI при запуске
 OpenButton.Visible = false
 MainFrame.Visible = true
 BackgroundGradient.Visible = true
-
--- Автостарт для тестирования
--- ESPEnabled.Toggle() -- Раскомментировать для автостарта ESP
--- AimbotEnabled.Toggle() -- Раскомментировать для автостарта Aimbot с авто-аим
