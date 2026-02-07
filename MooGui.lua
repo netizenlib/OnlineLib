@@ -50,7 +50,7 @@ local Settings = {
         FOVVisible = true,
         FOVColor = Color3.fromRGB(255, 50, 50),
         FOVTransparency = 0.3,
-        WallCheck = true -- Новая настройка для проверки стен
+        WallCheck = false -- ОТКЛЮЧАЕМ ПРОВЕРКУ СТЕН ДЛЯ AIMBOT
     },
     
     Memory = {
@@ -61,14 +61,15 @@ local Settings = {
     }
 }
 
--- ESP Объекты
-local ESPDrawings = {}
+-- ESP Объекты (ИСПРАВЛЕННЫЕ)
+local ESPObjects = {}
 local ESPConnections = {}
 
 -- Аимбот переменные
 local AimbotTarget = nil
 local AimbotConnection = nil
 local FOVCircle = nil
+local CurrentTarget = nil
 
 -- Speed Hack переменные
 local OriginalWalkSpeed = 16
@@ -789,121 +790,92 @@ local NoclipToggle = CreateToggle(MemoryContainer, "NOCLIP", Settings.Memory.Noc
     end
 end)
 
--- НОВАЯ ФУНКЦИЯ ПРОВЕРКИ ВИДИМОСТИ
-function IsVisible(targetPart)
-    if not targetPart or not LocalPlayer.Character then return false end
-    
-    local origin = Camera.CFrame.Position
-    local direction = (targetPart.Position - origin).Unit * 1000
-    
-    local raycastParams = RaycastParams.new()
-    raycastParams.FilterDescendantsInstances = {LocalPlayer.Character, Camera}
-    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-    raycastParams.IgnoreWater = true
-    
-    local raycastResult = Workspace:Raycast(origin, direction, raycastParams)
-    
-    if raycastResult then
-        local hitPart = raycastResult.Instance
-        local hitParent = hitPart and hitPart.Parent
-        
-        -- Проверяем, попал ли луч в цель или ее части
-        if hitParent and (hitParent == targetPart.Parent or hitParent:IsDescendantOf(targetPart.Parent)) then
-            return true
-        end
-        
-        -- Проверяем, попал ли луч в саму цель
-        if hitPart and (hitPart == targetPart or hitPart:IsDescendantOf(targetPart.Parent)) then
-            return true
-        end
-        
-        return false
-    end
-    
-    return true
-end
-
--- НОВЫЙ ESP (РАБОЧИЙ)
+-- ПРОСТОЙ И РАБОЧИЙ ESP (ПОКАЗЫВАЕТ СКВОЗЬ СТЕНЫ)
 function CreateESP(player)
-    if ESPDrawings[player] then return end
+    if ESPObjects[player] then return end
     
-    local drawings = {}
+    local esp = {}
     
-    -- Проверяем доступность Drawing API
-    local success = pcall(function()
-        drawings.Box = {
-            Left = Drawing.new("Line"),
-            Right = Drawing.new("Line"),
-            Top = Drawing.new("Line"),
-            Bottom = Drawing.new("Line")
-        }
-        
-        drawings.Name = Drawing.new("Text")
-        drawings.Health = Drawing.new("Text")
-        drawings.Distance = Drawing.new("Text")
-        drawings.Tracer = Drawing.new("Line")
-        
-        -- Настраиваем свойства
-        for _, line in pairs(drawings.Box) do
-            line.Thickness = Settings.ESP.BoxThickness
-            line.Color = Settings.ESP.BoxColor
-            line.Visible = false
-        end
-        
-        drawings.Name.Color = Settings.ESP.TextColor
-        drawings.Name.Size = Settings.ESP.TextSize
-        drawings.Name.Visible = false
-        drawings.Name.Center = true
-        drawings.Name.Outline = true
-        drawings.Name.Font = 2
-        
-        drawings.Health.Color = Color3.fromRGB(0, 255, 0)
-        drawings.Health.Size = Settings.ESP.TextSize
-        drawings.Health.Visible = false
-        drawings.Health.Center = true
-        drawings.Health.Outline = true
-        drawings.Health.Font = 2
-        
-        drawings.Distance.Color = Settings.ESP.TextColor
-        drawings.Distance.Size = Settings.ESP.TextSize
-        drawings.Distance.Visible = false
-        drawings.Distance.Center = true
-        drawings.Distance.Outline = true
-        drawings.Distance.Font = 2
-        
-        drawings.Tracer.Color = Settings.ESP.BoxColor
-        drawings.Tracer.Thickness = 1
-        drawings.Tracer.Visible = false
-        
-        ESPDrawings[player] = drawings
-    end)
+    -- Box Frame (используем Frame вместо Drawing для надежности)
+    esp.Box = Instance.new("Frame")
+    esp.Box.Name = "ESPBox"
+    esp.Box.Size = UDim2.new(0, 100, 0, 150)
+    esp.Box.BackgroundTransparency = 1
+    esp.Box.BorderSizePixel = 2
+    esp.Box.BorderColor3 = Settings.ESP.BoxColor
+    esp.Box.Visible = false
+    esp.Box.ZIndex = 10
+    esp.Box.Parent = ScreenGui
     
-    if not success then
-        warn("Drawing API не доступен")
-        ESPDrawings[player] = {}
-    end
+    -- Name Label
+    esp.Name = Instance.new("TextLabel")
+    esp.Name.Name = "ESPName"
+    esp.Name.Size = UDim2.new(0, 200, 0, 20)
+    esp.Name.BackgroundTransparency = 1
+    esp.Name.TextColor3 = Settings.ESP.TextColor
+    esp.Name.TextSize = Settings.ESP.TextSize
+    esp.Name.Font = Enum.Font.GothamBold
+    esp.Name.Text = player.Name
+    esp.Name.TextStrokeTransparency = 0
+    esp.Name.TextStrokeColor3 = Color3.new(0, 0, 0)
+    esp.Name.Visible = false
+    esp.Name.ZIndex = 11
+    esp.Name.Parent = ScreenGui
+    
+    -- Distance Label
+    esp.Distance = Instance.new("TextLabel")
+    esp.Distance.Name = "ESPDistance"
+    esp.Distance.Size = UDim2.new(0, 200, 0, 20)
+    esp.Distance.BackgroundTransparency = 1
+    esp.Distance.TextColor3 = Settings.ESP.TextColor
+    esp.Distance.TextSize = Settings.ESP.TextSize - 2
+    esp.Distance.Font = Enum.Font.Gotham
+    esp.Distance.TextStrokeTransparency = 0
+    esp.Distance.TextStrokeColor3 = Color3.new(0, 0, 0)
+    esp.Distance.Visible = false
+    esp.Distance.ZIndex = 11
+    esp.Distance.Parent = ScreenGui
+    
+    -- Health Label
+    esp.Health = Instance.new("TextLabel")
+    esp.Health.Name = "ESPHealth"
+    esp.Health.Size = UDim2.new(0, 200, 0, 20)
+    esp.Health.BackgroundTransparency = 1
+    esp.Health.TextColor3 = Color3.fromRGB(0, 255, 0)
+    esp.Health.TextSize = Settings.ESP.TextSize - 2
+    esp.Health.Font = Enum.Font.Gotham
+    esp.Health.TextStrokeTransparency = 0
+    esp.Health.TextStrokeColor3 = Color3.new(0, 0, 0)
+    esp.Health.Visible = false
+    esp.Health.ZIndex = 11
+    esp.Health.Parent = ScreenGui
+    
+    ESPObjects[player] = esp
 end
 
 function UpdateESP()
     if not Settings.ESP.Enabled then return end
     
-    for player, drawings in pairs(ESPDrawings) do
+    for _, player in pairs(Players:GetPlayers()) do
+        if player == LocalPlayer then continue end
+        
+        if not ESPObjects[player] then
+            CreateESP(player)
+        end
+        
+        local esp = ESPObjects[player]
         local character = player.Character
+        
         if character and character:FindFirstChild("HumanoidRootPart") then
             local rootPart = character.HumanoidRootPart
             local humanoid = character:FindFirstChild("Humanoid")
             
             -- Проверка команды
             if Settings.ESP.TeamCheck and player.Team and LocalPlayer.Team and player.Team == LocalPlayer.Team then
-                if drawings.Box then
-                    for _, line in pairs(drawings.Box) do
-                        line.Visible = false
-                    end
-                end
-                if drawings.Name then drawings.Name.Visible = false end
-                if drawings.Health then drawings.Health.Visible = false end
-                if drawings.Distance then drawings.Distance.Visible = false end
-                if drawings.Tracer then drawings.Tracer.Visible = false end
+                esp.Box.Visible = false
+                esp.Name.Visible = false
+                esp.Distance.Visible = false
+                esp.Health.Visible = false
                 continue
             end
             
@@ -912,20 +884,6 @@ function UpdateESP()
             local distance = (rootPart.Position - Camera.CFrame.Position).Magnitude
             
             if onScreen and distance <= Settings.ESP.MaxDistance then
-                -- Проверка видимости
-                if not IsVisible(rootPart) then
-                    if drawings.Box then
-                        for _, line in pairs(drawings.Box) do
-                            line.Visible = false
-                        end
-                    end
-                    if drawings.Name then drawings.Name.Visible = false end
-                    if drawings.Health then drawings.Health.Visible = false end
-                    if drawings.Distance then drawings.Distance.Visible = false end
-                    if drawings.Tracer then drawings.Tracer.Visible = false end
-                    continue
-                end
-                
                 local screenPosition = Vector2.new(position.X, position.Y)
                 
                 -- Размер бокса в зависимости от расстояния
@@ -935,12 +893,6 @@ function UpdateESP()
                     math.clamp(boxSize.Y, 40, 150)
                 )
                 
-                -- Углы бокса
-                local topLeft = Vector2.new(screenPosition.X - boxSize.X/2, screenPosition.Y - boxSize.Y/2)
-                local topRight = Vector2.new(screenPosition.X + boxSize.X/2, screenPosition.Y - boxSize.Y/2)
-                local bottomLeft = Vector2.new(screenPosition.X - boxSize.X/2, screenPosition.Y + boxSize.Y/2)
-                local bottomRight = Vector2.new(screenPosition.X + boxSize.X/2, screenPosition.Y + boxSize.Y/2)
-                
                 -- Цвет ESP
                 local espColor = Settings.ESP.BoxColor
                 if player.Team and LocalPlayer.Team and player.Team == LocalPlayer.Team then
@@ -948,105 +900,69 @@ function UpdateESP()
                 end
                 
                 -- ESP Box
-                if Settings.ESP.Box and drawings.Box then
-                    drawings.Box.Left.From = topLeft
-                    drawings.Box.Left.To = bottomLeft
-                    drawings.Box.Left.Color = espColor
-                    drawings.Box.Left.Visible = true
-                    
-                    drawings.Box.Right.From = topRight
-                    drawings.Box.Right.To = bottomRight
-                    drawings.Box.Right.Color = espColor
-                    drawings.Box.Right.Visible = true
-                    
-                    drawings.Box.Top.From = topLeft
-                    drawings.Box.Top.To = topRight
-                    drawings.Box.Top.Color = espColor
-                    drawings.Box.Top.Visible = true
-                    
-                    drawings.Box.Bottom.From = bottomLeft
-                    drawings.Box.Bottom.To = bottomRight
-                    drawings.Box.Bottom.Color = espColor
-                    drawings.Box.Bottom.Visible = true
-                elseif drawings.Box then
-                    for _, line in pairs(drawings.Box) do
-                        line.Visible = false
-                    end
+                if Settings.ESP.Box then
+                    esp.Box.Size = UDim2.new(0, boxSize.X, 0, boxSize.Y)
+                    esp.Box.Position = UDim2.new(0, screenPosition.X - boxSize.X/2, 0, screenPosition.Y - boxSize.Y/2)
+                    esp.Box.BorderColor3 = espColor
+                    esp.Box.Visible = true
+                else
+                    esp.Box.Visible = false
                 end
                 
-                -- Имя
-                if Settings.ESP.Names and drawings.Name then
-                    drawings.Name.Position = Vector2.new(screenPosition.X, screenPosition.Y - boxSize.Y/2 - 15)
-                    drawings.Name.Text = player.Name
-                    drawings.Name.Color = Settings.ESP.TextColor
-                    drawings.Name.Visible = true
-                elseif drawings.Name then
-                    drawings.Name.Visible = false
+                -- ESP Name
+                if Settings.ESP.Names then
+                    esp.Name.Position = UDim2.new(0, screenPosition.X - 100, 0, screenPosition.Y - boxSize.Y/2 - 25)
+                    esp.Name.TextColor3 = Settings.ESP.TextColor
+                    esp.Name.Visible = true
+                else
+                    esp.Name.Visible = false
                 end
                 
-                -- Здоровье
-                if Settings.ESP.Health and humanoid and drawings.Health then
-                    drawings.Health.Position = Vector2.new(screenPosition.X, screenPosition.Y - boxSize.Y/2 - 30)
-                    drawings.Health.Text = "HP: " .. math.floor(humanoid.Health)
+                -- ESP Distance
+                if Settings.ESP.Distance then
+                    esp.Distance.Position = UDim2.new(0, screenPosition.X - 100, 0, screenPosition.Y + boxSize.Y/2 + 5)
+                    esp.Distance.Text = "[" .. math.floor(distance) .. " studs]"
+                    esp.Distance.TextColor3 = Settings.ESP.TextColor
+                    esp.Distance.Visible = true
+                else
+                    esp.Distance.Visible = false
+                end
+                
+                -- ESP Health
+                if Settings.ESP.Health and humanoid then
+                    local health = math.floor(humanoid.Health)
+                    local maxHealth = humanoid.MaxHealth
+                    local healthPercent = health / maxHealth
+                    
+                    esp.Health.Position = UDim2.new(0, screenPosition.X - 100, 0, screenPosition.Y - boxSize.Y/2 - 45)
+                    esp.Health.Text = "HP: " .. health .. "/" .. maxHealth
                     
                     -- Цвет в зависимости от здоровья
-                    local healthPercent = humanoid.Health / humanoid.MaxHealth
                     if healthPercent > 0.6 then
-                        drawings.Health.Color = Color3.fromRGB(0, 255, 0)
+                        esp.Health.TextColor3 = Color3.fromRGB(0, 255, 0)
                     elseif healthPercent > 0.3 then
-                        drawings.Health.Color = Color3.fromRGB(255, 255, 0)
+                        esp.Health.TextColor3 = Color3.fromRGB(255, 255, 0)
                     else
-                        drawings.Health.Color = Color3.fromRGB(255, 0, 0)
+                        esp.Health.TextColor3 = Color3.fromRGB(255, 0, 0)
                     end
                     
-                    drawings.Health.Visible = true
-                elseif drawings.Health then
-                    drawings.Health.Visible = false
-                end
-                
-                -- Дистанция
-                if Settings.ESP.Distance and drawings.Distance then
-                    drawings.Distance.Position = Vector2.new(screenPosition.X, screenPosition.Y + boxSize.Y/2 + 10)
-                    drawings.Distance.Text = "[" .. math.floor(distance) .. " studs]"
-                    drawings.Distance.Color = Settings.ESP.TextColor
-                    drawings.Distance.Visible = true
-                elseif drawings.Distance then
-                    drawings.Distance.Visible = false
-                end
-                
-                -- Tracers
-                if Settings.ESP.Tracers and drawings.Tracer then
-                    local screenCenter = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
-                    drawings.Tracer.From = screenCenter
-                    drawings.Tracer.To = Vector2.new(screenPosition.X, screenPosition.Y + boxSize.Y/2)
-                    drawings.Tracer.Color = espColor
-                    drawings.Tracer.Visible = true
-                elseif drawings.Tracer then
-                    drawings.Tracer.Visible = false
+                    esp.Health.Visible = true
+                else
+                    esp.Health.Visible = false
                 end
             else
-                -- Если не на экране, скрываем
-                if drawings.Box then
-                    for _, line in pairs(drawings.Box) do
-                        line.Visible = false
-                    end
-                end
-                if drawings.Name then drawings.Name.Visible = false end
-                if drawings.Health then drawings.Health.Visible = false end
-                if drawings.Distance then drawings.Distance.Visible = false end
-                if drawings.Tracer then drawings.Tracer.Visible = false end
+                -- Если игрок не на экране, скрываем ESP
+                esp.Box.Visible = false
+                esp.Name.Visible = false
+                esp.Distance.Visible = false
+                esp.Health.Visible = false
             end
         else
-            -- Если персонажа нет, скрываем
-            if drawings.Box then
-                for _, line in pairs(drawings.Box) do
-                    line.Visible = false
-                end
-            end
-            if drawings.Name then drawings.Name.Visible = false end
-            if drawings.Health then drawings.Health.Visible = false end
-            if drawings.Distance then drawings.Distance.Visible = false end
-            if drawings.Tracer then drawings.Tracer.Visible = false end
+            -- Если персонажа нет, скрываем ESP
+            esp.Box.Visible = false
+            esp.Name.Visible = false
+            esp.Distance.Visible = false
+            esp.Health.Visible = false
         end
     end
 end
@@ -1071,21 +987,12 @@ function EnableESP()
     
     -- Обработчик вышедших игроков
     ESPConnections.PlayerRemoving = Players.PlayerRemoving:Connect(function(player)
-        if ESPDrawings[player] then
-            for _, drawing in pairs(ESPDrawings[player]) do
-                if typeof(drawing) == "table" then
-                    for _, line in pairs(drawing) do
-                        if line and line.Remove then
-                            pcall(function() line:Remove() end)
-                        end
-                    end
-                else
-                    if drawing and drawing.Remove then
-                        pcall(function() drawing:Remove() end)
-                    end
-                end
-            end
-            ESPDrawings[player] = nil
+        if ESPObjects[player] then
+            ESPObjects[player].Box:Destroy()
+            ESPObjects[player].Name:Destroy()
+            ESPObjects[player].Distance:Destroy()
+            ESPObjects[player].Health:Destroy()
+            ESPObjects[player] = nil
         end
     end)
 end
@@ -1099,26 +1006,17 @@ function DisableESP()
     end
     ESPConnections = {}
     
-    -- Удаляем все Drawing объекты
-    for _, drawings in pairs(ESPDrawings) do
-        for _, drawing in pairs(drawings) do
-            if typeof(drawing) == "table" then
-                for _, line in pairs(drawing) do
-                    if line and line.Remove then
-                        pcall(function() line:Remove() end)
-                    end
-                end
-            else
-                if drawing and drawing.Remove then
-                    pcall(function() drawing:Remove() end)
-                end
-            end
-        end
+    -- Удаляем все ESP объекты
+    for _, esp in pairs(ESPObjects) do
+        esp.Box:Destroy()
+        esp.Name:Destroy()
+        esp.Distance:Destroy()
+        esp.Health:Destroy()
     end
-    ESPDrawings = {}
+    ESPObjects = {}
 end
 
--- НОВЫЙ AIMBOT С ПРОВЕРКОЙ ВИДИМОСТИ
+-- РАБОЧИЙ AIMBOT (ИСПРАВЛЕННЫЙ)
 function GetClosestPlayer()
     local closestPlayer = nil
     local closestDistance = Settings.Aimbot.Distance
@@ -1140,11 +1038,6 @@ function GetClosestPlayer()
                 -- Проверка дистанции
                 local distance = (targetPart.Position - Camera.CFrame.Position).Magnitude
                 if distance > Settings.Aimbot.Distance then
-                    continue
-                end
-                
-                -- Проверка видимости (если включена)
-                if Settings.Aimbot.WallCheck and not IsVisible(targetPart) then
                     continue
                 end
                 
@@ -1177,19 +1070,15 @@ function AimAt()
     local targetPart = target.Character:FindFirstChild(Settings.Aimbot.TargetPart) or target.Character:FindFirstChild("HumanoidRootPart")
     if not targetPart then return end
     
-    -- Дополнительная проверка видимости
-    if Settings.Aimbot.WallCheck and not IsVisible(targetPart) then
-        AimbotTarget = nil
-        return
-    end
-    
     -- Плавное прицеливание
     local targetPosition = targetPart.Position + Vector3.new(0, 1.5, 0)
     
+    -- Используем CFrame для плавного прицеливания
     local camera = Camera
     local currentCFrame = camera.CFrame
     local targetCFrame = CFrame.new(camera.CFrame.Position, targetPosition)
     
+    -- Интерполяция для плавности
     local newCFrame = currentCFrame:Lerp(targetCFrame, Settings.Aimbot.Smoothness)
     camera.CFrame = newCFrame
 end
@@ -1197,28 +1086,22 @@ end
 function CreateFOVCircle()
     if FOVCircle then return end
     
-    -- Проверяем, доступен ли Drawing API
-    local success = pcall(function()
-        FOVCircle = Drawing.new("Circle")
-        FOVCircle.Visible = Settings.Aimbot.FOVVisible
-        FOVCircle.Color = Settings.Aimbot.FOVColor
-        FOVCircle.Thickness = 2
-        FOVCircle.Transparency = Settings.Aimbot.FOVTransparency
-        FOVCircle.NumSides = 64
-        FOVCircle.Radius = Settings.Aimbot.FOV
-        FOVCircle.Filled = false
-        
-        -- Центрируем FOV круг
-        RunService.RenderStepped:Connect(function()
-            if FOVCircle then
-                FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-            end
-        end)
-    end)
+    FOVCircle = Drawing.new("Circle")
+    FOVCircle.Visible = Settings.Aimbot.FOVVisible
+    FOVCircle.Color = Settings.Aimbot.FOVColor
+    FOVCircle.Thickness = 2
+    FOVCircle.Transparency = Settings.Aimbot.FOVTransparency
+    FOVCircle.NumSides = 64
+    FOVCircle.Radius = Settings.Aimbot.FOV
+    FOVCircle.Filled = false
     
-    if not success then
-        warn("Не удалось создать FOV круг")
-    end
+    -- Центрируем FOV круг
+    RunService.RenderStepped:Connect(function()
+        if FOVCircle then
+            local mouse = LocalPlayer:GetMouse()
+            FOVCircle.Position = Vector2.new(mouse.X, mouse.Y)
+        end
+    end)
 end
 
 function EnableAimbot()
@@ -1244,9 +1127,7 @@ function DisableAimbot()
     end
     
     if FOVCircle then
-        pcall(function()
-            FOVCircle:Remove()
-        end)
+        FOVCircle:Remove()
         FOVCircle = nil
     end
 end
