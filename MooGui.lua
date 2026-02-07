@@ -4,50 +4,23 @@
 -- ╚════██║██╔══██║   ██║   ██╔══██║██║╚██╗██║██╔══██║
 -- ███████║██║  ██║   ██║   ██║  ██║██║ ╚████║██║  ██║
 -- ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝
---                Premium Roblox Hack Menu
-
--- Конфигурация цветов
-local Config = {
-    MainColor = Color3.fromRGB(220, 20, 60),     -- Красный Satana
-    SecondaryColor = Color3.fromRGB(40, 40, 40),  -- Темно-серый
-    BackgroundColor = Color3.fromRGB(25, 25, 25), -- Фон
-    TextColor = Color3.fromRGB(255, 255, 255),    -- Белый текст
-    AccentColor = Color3.fromRGB(255, 50, 50),    -- Акцентный красный
-    BorderColor = Color3.fromRGB(60, 60, 60),     -- Цвет рамок
-    TabActiveColor = Color3.fromRGB(180, 0, 0),   -- Активный таб
-    SliderColor = Color3.fromRGB(200, 30, 30)     -- Цвет слайдеров
-}
 
 -- Создаем основной GUI
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "SatanaGUI"
-ScreenGui.DisplayOrder = 999
+ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
-if syn and syn.protect_gui then
-    syn.protect_gui(ScreenGui)
-end
-ScreenGui.Parent = game.CoreGui
+ScreenGui.Parent = game:GetService("CoreGui")
 
 -- Основное окно
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 450, 0, 500)
-MainFrame.Position = UDim2.new(0.5, -225, 0.5, -250)
-MainFrame.BackgroundColor3 = Config.BackgroundColor
+MainFrame.Size = UDim2.new(0, 350, 0, 450) -- Уменьшил для телефона
+MainFrame.Position = UDim2.new(0.5, -175, 0.5, -225)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 MainFrame.BorderSizePixel = 0
 MainFrame.ClipsDescendants = true
 MainFrame.Parent = ScreenGui
-
--- Тень окна
-local Shadow = Instance.new("Frame")
-Shadow.Size = UDim2.new(1, 10, 1, 10)
-Shadow.Position = UDim2.new(0, -5, 0, -5)
-Shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Shadow.BackgroundTransparency = 0.8
-Shadow.BorderSizePixel = 0
-Shadow.ZIndex = -1
-Shadow.Parent = MainFrame
 
 -- Закругление углов
 local UICorner = Instance.new("UICorner")
@@ -58,7 +31,7 @@ UICorner.Parent = MainFrame
 local TitleBar = Instance.new("Frame")
 TitleBar.Name = "TitleBar"
 TitleBar.Size = UDim2.new(1, 0, 0, 40)
-TitleBar.BackgroundColor3 = Config.MainColor
+TitleBar.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
 TitleBar.BorderSizePixel = 0
 TitleBar.Parent = MainFrame
 
@@ -72,7 +45,7 @@ Title.Size = UDim2.new(1, -40, 1, 0)
 Title.Position = UDim2.new(0, 10, 0, 0)
 Title.BackgroundTransparency = 1
 Title.Text = "SATANA"
-Title.TextColor3 = Config.TextColor
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 20
 Title.Font = Enum.Font.GothamBold
 Title.TextXAlignment = Enum.TextXAlignment.Left
@@ -86,7 +59,7 @@ CloseButton.Position = UDim2.new(1, -35, 0.5, -15)
 CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
 CloseButton.BorderSizePixel = 0
 CloseButton.Text = "×"
-CloseButton.TextColor3 = Config.TextColor
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseButton.TextSize = 24
 CloseButton.Font = Enum.Font.GothamBold
 CloseButton.Parent = TitleBar
@@ -100,360 +73,311 @@ local TabContainer = Instance.new("Frame")
 TabContainer.Name = "TabContainer"
 TabContainer.Size = UDim2.new(1, 0, 0, 40)
 TabContainer.Position = UDim2.new(0, 0, 0, 40)
-TabContainer.BackgroundColor3 = Config.SecondaryColor
+TabContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 TabContainer.BorderSizePixel = 0
 TabContainer.Parent = MainFrame
 
--- Область контента
-local ContentFrame = Instance.new("Frame")
-ContentFrame.Name = "ContentFrame"
-ContentFrame.Size = UDim2.new(1, -20, 1, -100)
-ContentFrame.Position = UDim2.new(0, 10, 0, 90)
-ContentFrame.BackgroundTransparency = 1
-ContentFrame.Parent = MainFrame
+-- Создаем кнопки табов
+local VisualsButton = Instance.new("TextButton")
+VisualsButton.Name = "VisualsButton"
+VisualsButton.Size = UDim2.new(0.333, 0, 1, 0)
+VisualsButton.Position = UDim2.new(0, 0, 0, 0)
+VisualsButton.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+VisualsButton.BorderSizePixel = 0
+VisualsButton.Text = "VISUALS"
+VisualsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+VisualsButton.TextSize = 14
+VisualsButton.Font = Enum.Font.GothamSemibold
+VisualsButton.Parent = TabContainer
 
--- Создаем табы
-local Tabs = {}
-local TabButtons = {}
+local AimbotButton = Instance.new("TextButton")
+AimbotButton.Name = "AimbotButton"
+AimbotButton.Size = UDim2.new(0.333, 0, 1, 0)
+AimbotButton.Position = UDim2.new(0.333, 0, 0, 0)
+AimbotButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+AimbotButton.BorderSizePixel = 0
+AimbotButton.Text = "AIMBOT"
+AimbotButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+AimbotButton.TextSize = 14
+AimbotButton.Font = Enum.Font.GothamSemibold
+AimbotButton.Parent = TabContainer
 
-local function CreateTab(name, displayName)
-    local tab = Instance.new("ScrollingFrame")
-    tab.Name = name .. "Tab"
-    tab.Size = UDim2.new(1, 0, 1, 0)
-    tab.BackgroundTransparency = 1
-    tab.BorderSizePixel = 0
-    tab.ScrollBarThickness = 4
-    tab.ScrollBarImageColor3 = Config.MainColor
-    tab.Visible = false
-    tab.Parent = ContentFrame
-    
-    local UIListLayout = Instance.new("UIListLayout")
-    UIListLayout.Padding = UDim.new(0, 10)
-    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    UIListLayout.Parent = tab
-    
-    local UIPadding = Instance.new("UIPadding")
-    UIPadding.PaddingTop = UDim.new(0, 10)
-    UIPadding.PaddingLeft = UDim.new(0, 5)
-    UIPadding.PaddingRight = UDim.new(0, 5)
-    UIPadding.Parent = tab
-    
-    -- Кнопка таба
-    local tabButton = Instance.new("TextButton")
-    tabButton.Name = name .. "Button"
-    tabButton.Size = UDim2.new(0.33, 0, 1, 0)
-    tabButton.BackgroundColor3 = Config.SecondaryColor
-    tabButton.BorderSizePixel = 0
-    tabButton.Text = displayName
-    tabButton.TextColor3 = Config.TextColor
-    tabButton.TextSize = 14
-    tabButton.Font = Enum.Font.GothamSemibold
-    tabButton.Parent = TabContainer
-    
-    local tabButtonCorner = Instance.new("UICorner")
-    tabButtonCorner.CornerRadius = UDim.new(0, 6)
-    tabButtonCorner.Parent = tabButton
-    
-    Tabs[name] = tab
-    TabButtons[name] = tabButton
-    
-    return tab
-end
+local MemoryButton = Instance.new("TextButton")
+MemoryButton.Name = "MemoryButton"
+MemoryButton.Size = UDim2.new(0.334, 0, 1, 0)
+MemoryButton.Position = UDim2.new(0.666, 0, 0, 0)
+MemoryButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+MemoryButton.BorderSizePixel = 0
+MemoryButton.Text = "MEMORY"
+MemoryButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MemoryButton.TextSize = 14
+MemoryButton.Font = Enum.Font.GothamSemibold
+MemoryButton.Parent = TabContainer
 
--- Создаем основные вкладки
-CreateTab("Visuals", "VISUALS")
-CreateTab("Aimbot", "AIMBOT")
-CreateTab("Memory", "MEMORY")
+-- Область контента (используем Frame вместо ScrollingFrame для простоты)
+local VisualsFrame = Instance.new("Frame")
+VisualsFrame.Name = "VisualsFrame"
+VisualsFrame.Size = UDim2.new(1, -20, 1, -100)
+VisualsFrame.Position = UDim2.new(0, 10, 0, 90)
+VisualsFrame.BackgroundTransparency = 1
+VisualsFrame.Visible = true
+VisualsFrame.Parent = MainFrame
 
--- Функция переключения табов
+local AimbotFrame = Instance.new("Frame")
+AimbotFrame.Name = "AimbotFrame"
+AimbotFrame.Size = UDim2.new(1, -20, 1, -100)
+AimbotFrame.Position = UDim2.new(0, 10, 0, 90)
+AimbotFrame.BackgroundTransparency = 1
+AimbotFrame.Visible = false
+AimbotFrame.Parent = MainFrame
+
+local MemoryFrame = Instance.new("Frame")
+MemoryFrame.Name = "MemoryFrame"
+MemoryFrame.Size = UDim2.new(1, -20, 1, -100)
+MemoryFrame.Position = UDim2.new(0, 10, 0, 90)
+MemoryFrame.BackgroundTransparency = 1
+MemoryFrame.Visible = false
+MemoryFrame.Parent = MainFrame
+
+-- Функция для переключения вкладок
 local function SwitchTab(tabName)
-    for name, tab in pairs(Tabs) do
-        tab.Visible = (name == tabName)
-        TabButtons[name].BackgroundColor3 = (name == tabName) and Config.TabActiveColor or Config.SecondaryColor
+    VisualsFrame.Visible = false
+    AimbotFrame.Visible = false
+    MemoryFrame.Visible = false
+    
+    VisualsButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    AimbotButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    MemoryButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    
+    if tabName == "Visuals" then
+        VisualsFrame.Visible = true
+        VisualsButton.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+    elseif tabName == "Aimbot" then
+        AimbotFrame.Visible = true
+        AimbotButton.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+    elseif tabName == "Memory" then
+        MemoryFrame.Visible = true
+        MemoryButton.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
     end
 end
 
--- Активируем первый таб
-SwitchTab("Visuals")
-
--- Создаем элементы управления
-local Controls = {}
-
--- Функция создания переключателя
-function Controls:CreateToggle(name, defaultValue, callback)
+-- Создаем элементы для вкладки Visuals
+local function CreateToggle(parent, text, yPosition)
     local toggleFrame = Instance.new("Frame")
-    toggleFrame.Size = UDim2.new(1, -10, 0, 30)
+    toggleFrame.Size = UDim2.new(1, 0, 0, 30)
+    toggleFrame.Position = UDim2.new(0, 0, 0, yPosition)
     toggleFrame.BackgroundTransparency = 1
-    toggleFrame.LayoutOrder = #self:GetChildren() + 1
+    toggleFrame.Parent = parent
     
     local toggleButton = Instance.new("TextButton")
     toggleButton.Size = UDim2.new(0, 50, 0, 25)
-    toggleButton.Position = UDim2.new(1, -55, 0, 2)
-    toggleButton.BackgroundColor3 = defaultValue and Config.MainColor or Config.SecondaryColor
+    toggleButton.Position = UDim2.new(1, -60, 0, 2)
+    toggleButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     toggleButton.BorderSizePixel = 0
     toggleButton.Text = ""
+    toggleButton.Parent = toggleFrame
     
     local toggleCorner = Instance.new("UICorner")
     toggleCorner.CornerRadius = UDim.new(0, 12)
     toggleCorner.Parent = toggleButton
     
     local toggleText = Instance.new("TextLabel")
-    toggleText.Size = UDim2.new(1, -60, 1, 0)
+    toggleText.Size = UDim2.new(1, -70, 1, 0)
     toggleText.BackgroundTransparency = 1
-    toggleText.Text = name
-    toggleText.TextColor3 = Config.TextColor
+    toggleText.Text = text
+    toggleText.TextColor3 = Color3.fromRGB(255, 255, 255)
     toggleText.TextSize = 14
     toggleText.Font = Enum.Font.Gotham
     toggleText.TextXAlignment = Enum.TextXAlignment.Left
-    
     toggleText.Parent = toggleFrame
-    toggleButton.Parent = toggleFrame
-    toggleFrame.Parent = self
     
-    local state = defaultValue
+    local state = false
     
     toggleButton.MouseButton1Click:Connect(function()
         state = not state
-        toggleButton.BackgroundColor3 = state and Config.MainColor or Config.SecondaryColor
-        if callback then
-            callback(state)
+        if state then
+            toggleButton.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
+        else
+            toggleButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
         end
+        print(text .. ":", state)
     end)
     
-    return {
-        Set = function(value)
-            state = value
-            toggleButton.BackgroundColor3 = state and Config.MainColor or Config.SecondaryColor
-        end,
-        Get = function() return state end
-    }
+    return toggleButton
 end
 
--- Функция создания слайдера
-function Controls:CreateSlider(name, min, max, defaultValue, callback)
-    local sliderFrame = Instance.new("Frame")
-    sliderFrame.Size = UDim2.new(1, -10, 0, 60)
-    sliderFrame.BackgroundTransparency = 1
-    sliderFrame.LayoutOrder = #self:GetChildren() + 1
-    
-    local sliderText = Instance.new("TextLabel")
-    sliderText.Size = UDim2.new(1, 0, 0, 20)
-    sliderText.BackgroundTransparency = 1
-    sliderText.Text = name .. ": " .. defaultValue
-    sliderText.TextColor3 = Config.TextColor
-    sliderText.TextSize = 14
-    sliderText.Font = Enum.Font.Gotham
-    sliderText.TextXAlignment = Enum.TextXAlignment.Left
-    sliderText.Parent = sliderFrame
-    
-    local sliderBackground = Instance.new("Frame")
-    sliderBackground.Size = UDim2.new(1, 0, 0, 25)
-    sliderBackground.Position = UDim2.new(0, 0, 0, 25)
-    sliderBackground.BackgroundColor3 = Config.SecondaryColor
-    sliderBackground.BorderSizePixel = 0
-    
-    local sliderCorner = Instance.new("UICorner")
-    sliderCorner.CornerRadius = UDim.new(0, 12)
-    sliderCorner.Parent = sliderBackground
-    
-    local sliderFill = Instance.new("Frame")
-    sliderFill.Size = UDim2.new((defaultValue - min) / (max - min), 0, 1, 0)
-    sliderFill.BackgroundColor3 = Config.SliderColor
-    sliderFill.BorderSizePixel = 0
-    
-    local fillCorner = Instance.new("UICorner")
-    fillCorner.CornerRadius = UDim.new(0, 12)
-    fillCorner.Parent = sliderFill
-    
-    local sliderButton = Instance.new("TextButton")
-    sliderButton.Size = UDim2.new(1, 0, 1, 0)
-    sliderButton.BackgroundTransparency = 1
-    sliderButton.Text = ""
-    
-    sliderFill.Parent = sliderBackground
-    sliderButton.Parent = sliderBackground
-    sliderBackground.Parent = sliderFrame
-    sliderFrame.Parent = self
-    
-    local dragging = false
-    local value = defaultValue
-    
-    local function updateValue(input)
-        local relativeX = (input.Position.X - sliderBackground.AbsolutePosition.X) / sliderBackground.AbsoluteSize.X
-        relativeX = math.clamp(relativeX, 0, 1)
-        value = math.floor(min + (max - min) * relativeX + 0.5)
-        sliderFill.Size = UDim2.new(relativeX, 0, 1, 0)
-        sliderText.Text = name .. ": " .. value
-        if callback then
-            callback(value)
-        end
-    end
-    
-    sliderButton.MouseButton1Down:Connect(function()
-        dragging = true
-    end)
-    
-    game:GetService("UserInputService").InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-    
-    game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            updateValue(input)
-        end
-    end)
-    
-    return {
-        Set = function(newValue)
-            value = math.clamp(newValue, min, max)
-            local relativeX = (value - min) / (max - min)
-            sliderFill.Size = UDim2.new(relativeX, 0, 1, 0)
-            sliderText.Text = name .. ": " .. value
-        end,
-        Get = function() return value end
-    }
-end
-
--- Функция создания кнопки
-function Controls:CreateButton(name, callback)
-    local button = Instance.new("TextButton")
-    button.Size = UDim2.new(1, -10, 0, 40)
-    button.BackgroundColor3 = Config.MainColor
-    button.BorderSizePixel = 0
-    button.Text = name
-    button.TextColor3 = Config.TextColor
-    button.TextSize = 16
-    button.Font = Enum.Font.GothamSemibold
-    button.LayoutOrder = #self:GetChildren() + 1
-    
-    local buttonCorner = Instance.new("UICorner")
-    buttonCorner.CornerRadius = UDim.new(0, 8)
-    buttonCorner.Parent = button
-    
-    button.MouseButton1Click:Connect(function()
-        if callback then
-            callback()
-        end
-    end)
-    
-    button.Parent = self
-    
-    return button
-end
-
--- Создаем элементы для вкладки Visuals
-local visuals = {
-    Controls:CreateToggle("ESP BOX", false, function(state)
-        print("ESP BOX:", state)
-    end),
-    
-    Controls:CreateToggle("ESP DISTANCE", false, function(state)
-        print("ESP DISTANCE:", state)
-    end),
-    
-    Controls:CreateToggle("ESP HEALTH", false, function(state)
-        print("ESP HEALTH:", state)
-    end),
-    
-    Controls:CreateToggle("ESP LINE", false, function(state)
-        print("ESP LINE:", state)
-    end)
-}
+-- Создаем элементы Visuals
+CreateToggle(VisualsFrame, "ESP BOX", 10)
+CreateToggle(VisualsFrame, "ESP DISTANCE", 50)
+CreateToggle(VisualsFrame, "ESP HEALTH", 90)
+CreateToggle(VisualsFrame, "ESP LINE", 130)
 
 -- Создаем элементы для вкладки Aimbot
-local aimbot = {
-    Controls:CreateToggle("Enable Aimbot", false, function(state)
-        print("Aimbot Enabled:", state)
-    end),
-    
-    Controls:CreateSlider("Aimbot Distance", 0, 500, 100, function(value)
-        print("Aimbot Distance:", value)
-    end),
-    
-    Controls:CreateSlider("Aimbot FOV", 1, 360, 90, function(value)
-        print("Aimbot FOV:", value)
-    end)
-}
+local aimbotToggle = CreateToggle(AimbotFrame, "Enable Aimbot", 10)
+
+-- Слайдер для расстояния аимбота
+local distanceFrame = Instance.new("Frame")
+distanceFrame.Size = UDim2.new(1, 0, 0, 60)
+distanceFrame.Position = UDim2.new(0, 0, 0, 50)
+distanceFrame.BackgroundTransparency = 1
+distanceFrame.Parent = AimbotFrame
+
+local distanceText = Instance.new("TextLabel")
+distanceText.Size = UDim2.new(1, 0, 0, 20)
+distanceText.BackgroundTransparency = 1
+distanceText.Text = "Aimbot Distance: 100"
+distanceText.TextColor3 = Color3.fromRGB(255, 255, 255)
+distanceText.TextSize = 14
+distanceText.Font = Enum.Font.Gotham
+distanceText.TextXAlignment = Enum.TextXAlignment.Left
+distanceText.Parent = distanceFrame
+
+local distanceSlider = Instance.new("Frame")
+distanceSlider.Size = UDim2.new(1, 0, 0, 25)
+distanceSlider.Position = UDim2.new(0, 0, 0, 25)
+distanceSlider.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+distanceSlider.BorderSizePixel = 0
+distanceSlider.Parent = distanceFrame
+
+local sliderCorner = Instance.new("UICorner")
+sliderCorner.CornerRadius = UDim.new(0, 12)
+sliderCorner.Parent = distanceSlider
+
+local sliderFill = Instance.new("Frame")
+sliderFill.Size = UDim2.new(0.5, 0, 1, 0)
+sliderFill.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
+sliderFill.BorderSizePixel = 0
+sliderFill.Parent = distanceSlider
+
+local fillCorner = Instance.new("UICorner")
+fillCorner.CornerRadius = UDim.new(0, 12)
+fillCorner.Parent = sliderFill
+
+-- Слайдер для FOV
+local fovFrame = Instance.new("Frame")
+fovFrame.Size = UDim2.new(1, 0, 0, 60)
+fovFrame.Position = UDim2.new(0, 0, 0, 120)
+fovFrame.BackgroundTransparency = 1
+fovFrame.Parent = AimbotFrame
+
+local fovText = Instance.new("TextLabel")
+fovText.Size = UDim2.new(1, 0, 0, 20)
+fovText.BackgroundTransparency = 1
+fovText.Text = "Aimbot FOV: 90"
+fovText.TextColor3 = Color3.fromRGB(255, 255, 255)
+fovText.TextSize = 14
+fovText.Font = Enum.Font.Gotham
+fovText.TextXAlignment = Enum.TextXAlignment.Left
+fovText.Parent = fovFrame
+
+local fovSlider = Instance.new("Frame")
+fovSlider.Size = UDim2.new(1, 0, 0, 25)
+fovSlider.Position = UDim2.new(0, 0, 0, 25)
+fovSlider.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+fovSlider.BorderSizePixel = 0
+fovSlider.Parent = fovFrame
+
+local fovSliderCorner = Instance.new("UICorner")
+fovSliderCorner.CornerRadius = UDim.new(0, 12)
+fovSliderCorner.Parent = fovSlider
+
+local fovFill = Instance.new("Frame")
+fovFill.Size = UDim2.new(0.25, 0, 1, 0)
+fovFill.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
+fovFill.BorderSizePixel = 0
+fovFill.Parent = fovSlider
+
+local fovFillCorner = Instance.new("UICorner")
+fovFillCorner.CornerRadius = UDim.new(0, 12)
+fovFillCorner.Parent = fovFill
 
 -- Создаем элементы для вкладки Memory
-local memory = {
-    Controls:CreateToggle("Speed Hack", false, function(state)
-        print("Speed Hack:", state)
-    end),
-    
-    Controls:CreateSlider("Speed Multiplier", 1, 10, 2, function(value)
-        print("Speed Multiplier:", value)
-    end),
-    
-    Controls:CreateToggle("God Mode", false, function(state)
-        print("God Mode:", state)
-    end)
-}
+local speedToggle = CreateToggle(MemoryFrame, "Speed Hack", 10)
 
--- Добавляем элементы в соответствующие табы
-for _, control in pairs(visuals) do
-    control:GetParent().Parent = Tabs.Visuals
-end
+-- Слайдер для множителя скорости
+local speedFrame = Instance.new("Frame")
+speedFrame.Size = UDim2.new(1, 0, 0, 60)
+speedFrame.Position = UDim2.new(0, 0, 0, 50)
+speedFrame.BackgroundTransparency = 1
+speedFrame.Parent = MemoryFrame
 
-for _, control in pairs(aimbot) do
-    control:GetParent().Parent = Tabs.Aimbot
-end
+local speedText = Instance.new("TextLabel")
+speedText.Size = UDim2.new(1, 0, 0, 20)
+speedText.BackgroundTransparency = 1
+speedText.Text = "Speed Multiplier: 2x"
+speedText.TextColor3 = Color3.fromRGB(255, 255, 255)
+speedText.TextSize = 14
+speedText.Font = Enum.Font.Gotham
+speedText.TextXAlignment = Enum.TextXAlignment.Left
+speedText.Parent = speedFrame
 
-for _, control in pairs(memory) do
-    control:GetParent().Parent = Tabs.Memory
-end
+local speedSlider = Instance.new("Frame")
+speedSlider.Size = UDim2.new(1, 0, 0, 25)
+speedSlider.Position = UDim2.new(0, 0, 0, 25)
+speedSlider.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+speedSlider.BorderSizePixel = 0
+speedSlider.Parent = speedFrame
 
--- Создаем кнопку открытия GUI (если закрыто)
+local speedSliderCorner = Instance.new("UICorner")
+speedSliderCorner.CornerRadius = UDim.new(0, 12)
+speedSliderCorner.Parent = speedSlider
+
+local speedFill = Instance.new("Frame")
+speedFill.Size = UDim2.new(0.2, 0, 1, 0)
+speedFill.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
+speedFill.BorderSizePixel = 0
+speedFill.Parent = speedSlider
+
+local speedFillCorner = Instance.new("UICorner")
+speedFillCorner.CornerRadius = UDim.new(0, 12)
+speedFillCorner.Parent = speedFill
+
+local godToggle = CreateToggle(MemoryFrame, "God Mode", 130)
+
+-- Кнопка открытия GUI (если закрыто)
 local OpenButton = Instance.new("TextButton")
 OpenButton.Name = "OpenButton"
-OpenButton.Size = UDim2.new(0, 100, 0, 40)
-OpenButton.Position = UDim2.new(1, -110, 0, 10)
-OpenButton.BackgroundColor3 = Config.MainColor
+OpenButton.Size = UDim2.new(0, 80, 0, 35)
+OpenButton.Position = UDim2.new(1, -90, 0, 10)
+OpenButton.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
 OpenButton.BorderSizePixel = 0
 OpenButton.Text = "SATANA"
-OpenButton.TextColor3 = Config.TextColor
-OpenButton.TextSize = 16
+OpenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+OpenButton.TextSize = 14
 OpenButton.Font = Enum.Font.GothamBold
 OpenButton.Visible = false
 OpenButton.Parent = ScreenGui
 
 local OpenButtonCorner = Instance.new("UICorner")
-OpenButtonCorner.CornerRadius = UDim.new(0, 8)
+OpenButtonCorner.CornerRadius = UDim.new(0, 6)
 OpenButtonCorner.Parent = OpenButton
 
 -- Функции открытия/закрытия
-local function CloseGUI()
+CloseButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = false
     OpenButton.Visible = true
-end
+end)
 
-local function OpenGUI()
+OpenButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = true
     OpenButton.Visible = false
-end
-
--- Назначаем обработчики
-CloseButton.MouseButton1Click:Connect(CloseGUI)
-OpenButton.MouseButton1Click:Connect(OpenGUI)
+end)
 
 -- Назначаем обработчики для кнопок табов
-TabButtons.Visuals.MouseButton1Click:Connect(function()
+VisualsButton.MouseButton1Click:Connect(function()
     SwitchTab("Visuals")
 end)
 
-TabButtons.Aimbot.MouseButton1Click:Connect(function()
+AimbotButton.MouseButton1Click:Connect(function()
     SwitchTab("Aimbot")
 end)
 
-TabButtons.Memory.MouseButton1Click:Connect(function()
+MemoryButton.MouseButton1Click:Connect(function()
     SwitchTab("Memory")
 end)
 
--- Добавляем возможность перетаскивания окна
+-- Функция для перетаскивания окна
 local dragging
-local dragInput
 local dragStart
 local startPos
 
@@ -463,7 +387,7 @@ local function update(input)
 end
 
 TitleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
         dragStart = input.Position
         startPos = MainFrame.Position
@@ -477,57 +401,64 @@ TitleBar.InputBegan:Connect(function(input)
 end)
 
 TitleBar.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        dragInput = input
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        if dragging then
+            update(input)
+        end
     end
 end)
-
-game:GetService("UserInputService").InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        update(input)
-    end
-end)
-
--- Автоматически открываем GUI при запуске
-OpenGUI()
 
 -- Уведомление о загрузке
-local Notification = Instance.new("Frame")
-Notification.Size = UDim2.new(0, 300, 0, 80)
-Notification.Position = UDim2.new(0.5, -150, 1, 10)
-Notification.BackgroundColor3 = Config.MainColor
-Notification.BorderSizePixel = 0
-Notification.Parent = ScreenGui
+task.spawn(function()
+    local Notification = Instance.new("Frame")
+    Notification.Size = UDim2.new(0, 250, 0, 70)
+    Notification.Position = UDim2.new(0.5, -125, 1, 10)
+    Notification.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
+    Notification.BorderSizePixel = 0
+    Notification.Parent = ScreenGui
 
-local NotifCorner = Instance.new("UICorner")
-NotifCorner.CornerRadius = UDim.new(0, 8)
-NotifCorner.Parent = Notification
+    local NotifCorner = Instance.new("UICorner")
+    NotifCorner.CornerRadius = UDim.new(0, 8)
+    NotifCorner.Parent = Notification
 
-local NotifTitle = Instance.new("TextLabel")
-NotifTitle.Size = UDim2.new(1, 0, 0, 30)
-NotifTitle.BackgroundTransparency = 1
-NotifTitle.Text = "SATANA LOADED"
-NotifTitle.TextColor3 = Config.TextColor
-NotifTitle.TextSize = 18
-NotifTitle.Font = Enum.Font.GothamBold
-NotifTitle.Parent = Notification
+    local NotifTitle = Instance.new("TextLabel")
+    NotifTitle.Size = UDim2.new(1, 0, 0, 25)
+    NotifTitle.BackgroundTransparency = 1
+    NotifTitle.Text = "SATANA LOADED"
+    NotifTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    NotifTitle.TextSize = 16
+    NotifTitle.Font = Enum.Font.GothamBold
+    NotifTitle.Parent = Notification
 
-local NotifText = Instance.new("TextLabel")
-NotifText.Size = UDim2.new(1, -20, 0, 40)
-NotifText.Position = UDim2.new(0, 10, 0, 30)
-NotifText.BackgroundTransparency = 1
-NotifText.Text = "GUI успешно загружена!"
-NotifText.TextColor3 = Config.TextColor
-NotifText.TextSize = 14
-NotifText.Font = Enum.Font.Gotham
-NotifText.Parent = Notification
+    local NotifText = Instance.new("TextLabel")
+    NotifText.Size = UDim2.new(1, -10, 0, 35)
+    NotifText.Position = UDim2.new(0, 5, 0, 25)
+    NotifText.BackgroundTransparency = 1
+    NotifText.Text = "GUI успешно загружена!"
+    NotifText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    NotifText.TextSize = 12
+    NotifText.Font = Enum.Font.Gotham
+    NotifText.Parent = Notification
 
--- Анимация появления уведомления
-Notification:TweenPosition(UDim2.new(0.5, -150, 1, -100), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5)
-
--- Автоматическое скрытие уведомления
-game:GetService("Debris"):AddItem(Notification, 5)
+    -- Анимация появления
+    Notification:TweenPosition(UDim2.new(0.5, -125, 1, -90), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5)
+    
+    -- Автоматическое скрытие
+    wait(3)
+    Notification:TweenPosition(UDim2.new(0.5, -125, 1, 10), Enum.EasingDirection.In, Enum.EasingStyle.Quad, 0.5)
+    wait(0.5)
+    Notification:Destroy()
+end)
 
 print("===================================")
-print("SATANA GUI успешно загружена!")
+print("SATANA GUI загружена успешно!")
+print("Адаптирована для мобильных устройств")
 print("===================================")
+
+-- Отправляем уведомление в чат
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "SATANA",
+    Text = "GUI успешно загружена!",
+    Duration = 3,
+    Icon = "rbxassetid://0"
+})
